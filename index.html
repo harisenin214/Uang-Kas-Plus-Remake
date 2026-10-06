@@ -1,0 +1,3582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>UangKasPlus — Kas kelas, beres.</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#1E40AF">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* ============================================================
+   UANGKASPLUS v3.1 — Banking App UI (Dark Blue Edition)
+   ============================================================ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  /* DARK BLUE PALETTE */
+  --primary:#1E40AF;
+  --primary-dark:#1E3A8A;
+  --primary-light:#3B82F6;
+  --primary-50:#EFF6FF;
+  --primary-100:#DBEAFE;
+  --grad:linear-gradient(135deg,#1E40AF 0%,#2563EB 100%);
+  --grad-deep:linear-gradient(140deg,#172554 0%,#1E3A8A 50%,#1E40AF 100%);
+  --grad-tosca:linear-gradient(135deg,#0E7490 0%,#06B6D4 100%);
+  --grad-ungu:linear-gradient(135deg,#4338CA 0%,#6366F1 100%);
+  --grad-gold:linear-gradient(135deg,#B45309 0%,#F59E0B 100%);
+  --grad-green:linear-gradient(135deg,#047857 0%,#10B981 100%);
+  --grad-red:linear-gradient(135deg,#B91C1C 0%,#EF4444 100%);
+  --success:#10B981; --success-bg:#D1FAE5;
+  --warning:#F59E0B; --warning-bg:#FEF3C7;
+  --danger:#EF4444; --danger-bg:#FEE2E2;
+  --info:#64748B; --info-bg:#F1F5F9;
+  --bg:#F4F7FB; --card:#FFFFFF; --input:#F1F5F9;
+  --border:#E2E8F0; --border-light:#EEF2F7;
+  --text:#0F172A; --text-2:#64748B; --text-3:#94A3B8;
+  --shadow-xs:0 1px 2px rgba(15,23,42,.04);
+  --shadow-sm:0 2px 8px rgba(15,23,42,.05);
+  --shadow:0 6px 20px rgba(15,23,42,.07);
+  --shadow-lg:0 16px 48px rgba(15,23,42,.12);
+  --shadow-blue:0 10px 30px rgba(30,64,175,.28);
+  --r-lg:22px; --r:16px; --r-sm:12px; --r-xs:10px;
+  --nav-h:74px; --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+}
+html{font-size:15px}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:#0B1220; color:var(--text);
+  min-height:100vh; min-height:100dvh;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.font-display{font-family:'Plus Jakarta Sans',sans-serif}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ============ APP SHELL ============ */
+#app{
+  width:100%; max-width:480px; height:100vh; height:100dvh;
+  background:var(--bg); position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  box-shadow:0 0 80px rgba(0,0,0,.4);
+}
+@media(min-width:600px){
+  #app{border-radius:32px; height:92vh; max-height:920px}
+}
+
+/* ============ SPLASH ============ */
+#splash{
+  position:fixed; inset:0; background:var(--grad-deep); z-index:9999;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:opacity .6s, visibility .6s;
+  overflow:hidden;
+}
+#splash::before{
+  content:''; position:absolute; width:400px; height:400px;
+  background:radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+  top:-100px; right:-150px; border-radius:50%;
+  animation:pulse 3s ease-in-out infinite;
+}
+#splash::after{
+  content:''; position:absolute; width:300px; height:300px;
+  background:radial-gradient(circle, rgba(255,255,255,.10) 0%, transparent 70%);
+  bottom:-80px; left:-100px; border-radius:50%;
+}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.7}}
+#splash.hide{opacity:0; visibility:hidden; pointer-events:none}
+#splash .s-logo{
+  width:96px; height:96px; border-radius:30px;
+  background:rgba(255,255,255,.18); backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.25);
+  display:flex; align-items:center; justify-content:center;
+  font-size:3rem; color:#fff; margin-bottom:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.2);
+  position:relative; z-index:1;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+#splash h1{
+  font-family:'Plus Jakarta Sans'; font-size:2.2rem; font-weight:800;
+  color:#fff; letter-spacing:-.8px; position:relative; z-index:1;
+}
+#splash h1 span{color:#FCD34D}
+#splash p{color:rgba(255,255,255,.75); font-size:.92rem; margin-top:6px; position:relative; z-index:1}
+#splash .s-load{
+  margin-top:32px; width:40px; height:40px;
+  border:3px solid rgba(255,255,255,.2); border-top-color:#fff;
+  border-radius:50%; animation:spin .8s linear infinite;
+  position:relative; z-index:1;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ SCREENS ============ */
+.screen{display:none; flex:1; flex-direction:column; background:var(--bg); overflow:hidden}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ LOGIN ============ */
+#loginScreen{padding:32px 24px; justify-content:center; overflow-y:auto; position:relative}
+#loginScreen::before{
+  content:''; position:absolute; top:-120px; left:-80px;
+  width:320px; height:320px;
+  background:radial-gradient(circle, rgba(30,64,175,.10) 0%, transparent 70%);
+  border-radius:50%; pointer-events:none;
+}
+.login-hero{text-align:center; margin-bottom:32px; position:relative; z-index:1}
+.login-hero .lh-logo{
+  width:80px; height:80px; border-radius:26px; background:var(--grad);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.4rem; color:#fff; margin:0 auto 18px;
+  box-shadow:0 16px 40px rgba(30,64,175,.35);
+  position:relative;
+}
+.login-hero .lh-logo::after{
+  content:''; position:absolute; inset:-4px; border-radius:30px;
+  background:linear-gradient(135deg,rgba(30,64,175,.4),transparent);
+  z-index:-1; filter:blur(10px);
+}
+.login-hero h1{font-family:'Plus Jakarta Sans'; font-size:1.85rem; font-weight:800; letter-spacing:-.6px}
+.login-hero h1 span{background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+.login-hero p{color:var(--text-2); font-size:.92rem; margin-top:6px}
+.login-tabs{
+  display:flex; background:#fff; border-radius:14px; padding:5px;
+  margin-bottom:22px; gap:5px; box-shadow:var(--shadow-sm);
+  position:relative; z-index:1;
+}
+.login-tabs button{
+  flex:1; padding:12px; border:none; background:transparent; border-radius:10px;
+  font-family:inherit; font-weight:700; font-size:.86rem; color:var(--text-2);
+  cursor:pointer; transition:.25s;
+}
+.login-tabs button.active{background:var(--grad); color:#fff; box-shadow:var(--shadow-blue)}
+.login-card{
+  background:#fff; border-radius:var(--r-lg); padding:26px 22px;
+  box-shadow:var(--shadow); position:relative; z-index:1;
+}
+.login-card .greet{font-size:.86rem; color:var(--text-2); margin-bottom:18px; text-align:center}
+.login-card .greet strong{color:var(--text); font-weight:700}
+.pin-input{
+  width:100%; text-align:center; font-family:'Plus Jakarta Sans';
+  font-size:2.2rem; font-weight:800; letter-spacing:16px;
+  padding:20px 16px; background:var(--input);
+  border:2px solid transparent; border-radius:16px; color:var(--text);
+  transition:.25s; outline:none; padding-left:calc(16px + 16px);
+}
+.pin-input:focus{border-color:var(--primary); background:#fff; box-shadow:0 0 0 4px rgba(30,64,175,.1)}
+.login-card .err{color:var(--danger); font-size:.8rem; text-align:center; min-height:20px; margin-top:8px; font-weight:600}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:14px 20px; border-radius:14px; font-family:inherit; font-weight:700;
+  font-size:.9rem; border:none; cursor:pointer; transition:.15s;
+  background:var(--input); color:var(--text-2);
+}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--grad); color:#fff; box-shadow:var(--shadow-blue)}
+.btn.success{background:var(--grad-green); color:#fff; box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.btn.danger{background:var(--grad-red); color:#fff; box-shadow:0 8px 24px rgba(239,68,68,.3)}
+.btn.ghost{background:#fff; border:1.5px solid var(--border); color:var(--text-2)}
+.btn.ghost:active{background:var(--input)}
+.btn.block{width:100%}
+.btn.sm{padding:10px 14px; font-size:.8rem; border-radius:12px}
+.btn.xs{padding:7px 12px; font-size:.72rem; border-radius:10px}
+.btn:disabled{opacity:.45; cursor:not-allowed; pointer-events:none}
+.login-card .btn.primary{margin-top:18px; width:100%; padding:16px; font-size:.95rem}
+.login-foot{text-align:center; margin-top:20px; font-size:.75rem; color:var(--text-3); position:relative; z-index:1}
+.login-foot button{
+  background:none; border:none; color:var(--primary); font-weight:700;
+  font-family:inherit; cursor:pointer; font-size:.75rem;
+}
+.student-input{
+  width:100%; text-align:center; font-family:'Plus Jakarta Sans';
+  font-size:1.4rem; font-weight:800; letter-spacing:8px;
+  padding:20px 16px; background:var(--input);
+  border:2px solid transparent; border-radius:16px; color:var(--text);
+  transition:.25s; outline:none; text-transform:uppercase;
+}
+.student-input:focus{border-color:var(--primary); background:#fff; box-shadow:0 0 0 4px rgba(30,64,175,.1)}
+
+/* ============ SETUP WIZARD ============ */
+#setupScreen{padding:24px; overflow-y:auto}
+.setup-head{margin-bottom:24px}
+.setup-head .step-pill{
+  display:inline-block; background:var(--primary-50); color:var(--primary);
+  font-size:.7rem; font-weight:800; padding:6px 14px; border-radius:20px;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:12px;
+  border:1px solid var(--primary-100);
+}
+.setup-head h2{font-family:'Plus Jakarta Sans'; font-size:1.55rem; font-weight:800; letter-spacing:-.4px}
+.setup-head p{color:var(--text-2); font-size:.86rem; margin-top:6px}
+.setup-body{
+  background:#fff; border-radius:var(--r-lg); padding:24px 22px;
+  box-shadow:var(--shadow); margin-bottom:16px;
+}
+.f-group{margin-bottom:16px}
+.f-group label{display:block; font-size:.78rem; font-weight:700; color:var(--text-2); margin-bottom:7px; letter-spacing:.1px}
+.f-group input,.f-group select,.f-group textarea{
+  width:100%; padding:14px 16px; background:var(--input);
+  border:2px solid transparent; border-radius:14px; font-family:inherit;
+  font-size:16px; color:var(--text); outline:none; transition:.2s;
+}
+.f-group input:focus,.f-group select:focus,.f-group textarea:focus{
+  border-color:var(--primary); background:#fff; box-shadow:0 0 0 4px rgba(30,64,175,.08);
+}
+.f-group .hint{font-size:.72rem; color:var(--text-3); margin-top:5px}
+.setup-nav{display:flex; gap:10px}
+.setup-nav .btn{flex:1; padding:15px}
+.student-list-setup{max-height:220px; overflow-y:auto; margin-top:8px}
+.student-list-setup .item{
+  display:flex; align-items:center; gap:12px; padding:11px 14px;
+  background:var(--input); border-radius:12px; margin-bottom:6px; font-size:.86rem;
+}
+.student-list-setup .item .num{font-weight:800; color:var(--text-3); min-width:22px; font-family:'Plus Jakarta Sans'}
+.student-list-setup .item .nm{flex:1; font-weight:600}
+.student-list-setup .item button{
+  background:none; border:none; color:var(--danger); cursor:pointer;
+  font-size:.85rem; padding:5px 9px; border-radius:8px;
+}
+
+/* ============ MAIN HEADER (RAPI) ============ */
+.app-header{
+  position:relative;
+  background:var(--grad-deep);
+  color:#fff;
+  padding:calc(14px + var(--safe-t)) 18px 14px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0; z-index:10;
+  border-radius:0 0 24px 24px;
+  box-shadow:0 8px 24px rgba(23,37,84,.28);
+  overflow:hidden;
+  min-height:64px;
+}
+.app-header::before{
+  content:''; position:absolute; top:-60px; right:-40px;
+  width:180px; height:180px;
+  background:radial-gradient(circle, rgba(255,255,255,.14) 0%, transparent 70%);
+  border-radius:50%; pointer-events:none;
+}
+.app-header::after{
+  content:''; position:absolute; bottom:-90px; left:-50px;
+  width:150px; height:150px;
+  background:radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 70%);
+  border-radius:50%; pointer-events:none;
+}
+.app-header .brand{
+  display:flex; align-items:center; gap:11px;
+  position:relative; z-index:1; min-width:0;
+}
+.app-header .brand-icon{
+  width:38px; height:38px; border-radius:12px;
+  background:rgba(255,255,255,.18); backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.05rem; border:1px solid rgba(255,255,255,.18);
+  flex-shrink:0;
+}
+.app-header .brand-text{display:flex; flex-direction:column; gap:1px; min-width:0}
+.app-header .brand-title{
+  font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1.05rem;
+  letter-spacing:-.4px; line-height:1.15; white-space:nowrap;
+}
+.app-header .brand-title span{color:#FCD34D}
+.app-header .brand-sub{
+  font-size:.66rem; font-weight:600; opacity:.85; letter-spacing:.2px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px;
+}
+.app-header .header-right{display:flex; align-items:center; gap:10px; position:relative; z-index:1; flex-shrink:0}
+.app-header .role-chip{
+  font-size:.62rem; font-weight:800; padding:5px 10px; border-radius:14px;
+  text-transform:uppercase; letter-spacing:.4px; white-space:nowrap;
+}
+.role-chip.treasurer{background:rgba(252,211,77,.95); color:#78350F}
+.role-chip.student{background:rgba(52,211,153,.95); color:#064E3B}
+.app-header .avatar-btn{
+  width:38px; height:38px; border-radius:50%; background:#fff; color:var(--primary);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:.85rem; border:none; cursor:pointer;
+  font-family:'Plus Jakarta Sans'; box-shadow:0 4px 12px rgba(0,0,0,.15);
+  transition:.15s; flex-shrink:0;
+}
+.app-header .avatar-btn:active{transform:scale(.92)}
+
+/* ============ CONTENT ============ */
+.app-content{
+  flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:16px 16px calc(var(--nav-h) + 28px + var(--safe-b));
+  scroll-behavior:smooth;
+}
+.app-content::-webkit-scrollbar{width:0}
+.page{display:none; animation:fadeIn .35s ease}
+.page.active{display:block}
+.page-title{font-family:'Plus Jakarta Sans'; font-size:1.4rem; font-weight:800; letter-spacing:-.5px; margin-bottom:3px; color:var(--text)}
+.page-sub{color:var(--text-2); font-size:.84rem; margin-bottom:18px}
+.section-label{
+  font-size:.68rem; font-weight:800; color:var(--text-3);
+  text-transform:uppercase; letter-spacing:.8px;
+  margin:22px 4px 12px; display:flex; align-items:center; justify-content:space-between;
+}
+.section-label .link{color:var(--primary); font-size:.72rem; font-weight:700; text-transform:none; letter-spacing:0; cursor:pointer}
+
+/* ============ HERO CARD (FIXED - no floating) ============ */
+.hero-card{
+  background:var(--grad);
+  border-radius:24px; padding:24px 22px;
+  color:#fff; position:relative; overflow:hidden;
+  box-shadow:0 16px 40px rgba(30,64,175,.32);
+  margin-bottom:18px;
+}
+.hero-card::before{
+  content:''; position:absolute; top:-80px; right:-60px; width:220px; height:220px;
+  background:radial-gradient(circle, rgba(255,255,255,.20) 0%, transparent 70%);
+  border-radius:50%;
+}
+.hero-card::after{
+  content:''; position:absolute; bottom:-60px; left:-40px; width:150px; height:150px;
+  background:radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 70%);
+  border-radius:50%;
+}
+.hero-top{display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1}
+.hero-label{font-size:.78rem; font-weight:700; opacity:.9; letter-spacing:.3px; display:flex; align-items:center; gap:7px}
+.hero-label i{font-size:.75rem}
+.hero-badge{
+  background:rgba(255,255,255,.22); backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  padding:5px 12px; border-radius:16px; font-size:.66rem; font-weight:800;
+  letter-spacing:.4px; border:1px solid rgba(255,255,255,.2);
+  display:flex; align-items:center; gap:5px;
+}
+.hero-badge::before{content:''; width:6px; height:6px; border-radius:50%; background:#4ADE80; box-shadow:0 0 8px #4ADE80}
+.hero-nominal{
+  font-family:'Plus Jakarta Sans'; font-size:2.5rem; font-weight:800;
+  letter-spacing:-1.2px; margin-top:8px; position:relative; z-index:1;
+  text-shadow:0 4px 20px rgba(0,0,0,.15);
+}
+.hero-detail{
+  display:flex; gap:10px; margin-top:18px; position:relative; z-index:1;
+  background:rgba(255,255,255,.14); backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-radius:14px; padding:12px; border:1px solid rgba(255,255,255,.15);
+}
+.hero-detail .hd-item{flex:1; display:flex; flex-direction:column; gap:3px; min-width:0}
+.hero-detail .hd-item + .hd-item{padding-left:10px; border-left:1px solid rgba(255,255,255,.2)}
+.hero-detail .hd-label{font-size:.63rem; opacity:.85; font-weight:600; display:flex; align-items:center; gap:4px}
+.hero-detail .hd-value{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:.88rem; letter-spacing:-.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* ============ QUICK ACTIONS ============ */
+.quick-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:6px}
+.qa{
+  background:#fff; border-radius:18px; padding:16px 6px 13px; text-align:center;
+  border:none; cursor:pointer; transition:.18s; font-family:inherit;
+  box-shadow:0 2px 10px rgba(15,23,42,.05);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.qa:active{transform:scale(.94); box-shadow:0 1px 4px rgba(15,23,42,.08)}
+.qa-icon{
+  width:48px; height:48px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.15rem; color:#fff; transition:.2s;
+}
+.qa-icon.blue{background:var(--grad); box-shadow:0 8px 20px rgba(30,64,175,.3)}
+.qa-icon.green{background:var(--grad-green); box-shadow:0 8px 20px rgba(16,185,129,.3)}
+.qa-icon.gold{background:var(--grad-gold); box-shadow:0 8px 20px rgba(245,158,11,.3)}
+.qa-icon.purple{background:var(--grad-ungu); box-shadow:0 8px 20px rgba(99,102,241,.3)}
+.qa-label{font-size:.72rem; font-weight:700; color:var(--text-2); letter-spacing:-.1px}
+
+/* ============ STAT CARDS ============ */
+.stat2{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:6px}
+.stat-card{
+  background:#fff; border-radius:18px; padding:18px;
+  box-shadow:0 2px 10px rgba(15,23,42,.05);
+  position:relative; overflow:hidden;
+}
+.stat-card::before{
+  content:''; position:absolute; top:-20px; right:-20px;
+  width:80px; height:80px; border-radius:50%;
+  background:radial-gradient(circle, rgba(30,64,175,.08) 0%, transparent 70%);
+}
+.stat-card .st-label{
+  font-size:.68rem; color:var(--text-3); font-weight:700;
+  text-transform:uppercase; letter-spacing:.5px;
+  display:flex; align-items:center; gap:6px;
+}
+.stat-card .st-value{
+  font-family:'Plus Jakarta Sans'; font-size:1.75rem; font-weight:800;
+  margin-top:6px; letter-spacing:-.6px; line-height:1;
+}
+.stat-card .st-sub{font-size:.72rem; color:var(--text-2); margin-top:5px; font-weight:500}
+.stat-card .prog{height:6px; background:var(--input); border-radius:10px; margin-top:10px; overflow:hidden}
+.stat-card .prog i{display:block; height:100%; border-radius:10px; background:var(--grad-green); transition:width .8s}
+.stat-card .prog.warn i{background:var(--grad-gold)}
+
+/* ============ TARGET CARD ============ */
+.target-card{
+  background:#fff; border-radius:18px; padding:20px;
+  box-shadow:0 2px 10px rgba(15,23,42,.05);
+  margin-bottom:12px;
+}
+.target-card .tc-head{display:flex; align-items:center; gap:12px; margin-bottom:12px}
+.target-card .tc-icon{
+  width:44px; height:44px; border-radius:14px;
+  background:var(--grad-gold); display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:1.1rem; box-shadow:0 8px 20px rgba(245,158,11,.28);
+  flex-shrink:0;
+}
+.target-card .tc-name{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1rem; letter-spacing:-.2px}
+.target-card .tc-amount{font-size:.82rem; color:var(--text-2); margin-top:3px}
+.target-card .tc-amount strong{color:var(--text); font-weight:800}
+.target-card .tc-prog{height:10px; background:var(--input); border-radius:10px; margin-top:14px; overflow:hidden}
+.target-card .tc-prog i{display:block; height:100%; background:var(--grad-gold); border-radius:10px; transition:width .8s}
+.target-card .tc-foot{display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:.72rem; color:var(--text-2); font-weight:600}
+.target-card .tc-pct{font-weight:800; color:#B45309; font-family:'Plus Jakarta Sans'; font-size:.85rem}
+
+/* ============ ACTIVITY / TX LIST ============ */
+.activity-list{background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 2px 10px rgba(15,23,42,.05)}
+.act-item{display:flex; align-items:center; gap:13px; padding:15px 18px; border-bottom:1px solid var(--border-light); cursor:pointer; transition:.15s}
+.act-item:last-child{border-bottom:none}
+.act-item:active{background:var(--input)}
+.act-av{
+  width:42px; height:42px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.95rem; color:#fff; flex-shrink:0;
+}
+.act-av.in{background:var(--grad-green)}
+.act-av.out{background:var(--grad-red)}
+.act-body{flex:1; min-width:0}
+.act-title{font-weight:700; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text)}
+.act-meta{font-size:.72rem; color:var(--text-3); margin-top:3px; font-weight:500}
+.act-amt{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:.9rem; text-align:right; white-space:nowrap}
+.act-amt.in{color:var(--success)}
+.act-amt.out{color:var(--danger)}
+
+/* ============ FILTER CHIPS ============ */
+.chips{display:flex; gap:8px; overflow-x:auto; padding:2px 0 14px; -ms-overflow-style:none; scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0; padding:9px 16px; background:#fff;
+  border:1.5px solid var(--border); border-radius:22px;
+  font-family:inherit; font-size:.78rem; font-weight:700; color:var(--text-2);
+  cursor:pointer; transition:.18s; box-shadow:var(--shadow-xs);
+}
+.chip.active{background:var(--grad); color:#fff; border-color:transparent; box-shadow:var(--shadow-blue)}
+
+/* ============ TOOLBAR ============ */
+.toolbar{display:flex; gap:8px; margin-bottom:14px; align-items:center}
+.search-box{
+  flex:1; display:flex; align-items:center; gap:10px;
+  background:#fff; border:1.5px solid var(--border); border-radius:14px;
+  padding:0 16px; transition:.2s; box-shadow:var(--shadow-xs);
+}
+.search-box:focus-within{border-color:var(--primary); box-shadow:0 0 0 4px rgba(30,64,175,.08)}
+.search-box i{color:var(--text-3); font-size:.9rem}
+.search-box input{flex:1; padding:13px 0; background:transparent; border:none; outline:none; font-family:inherit; font-size:16px; color:var(--text)}
+
+/* ============ STUDENT CARD ============ */
+.student-card{
+  background:#fff; border-radius:18px; padding:18px;
+  margin-bottom:12px; box-shadow:0 2px 10px rgba(15,23,42,.05);
+  transition:.18s;
+}
+.student-card:active{transform:scale(.99)}
+.sc-head{display:flex; align-items:center; gap:13px}
+.sc-av{
+  width:46px; height:46px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-family:'Plus Jakarta Sans';
+  font-size:1rem; flex-shrink:0; box-shadow:0 4px 12px rgba(15,23,42,.1);
+}
+.sc-info{flex:1; min-width:0}
+.sc-name{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:.96rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-.2px}
+.sc-meta{font-size:.72rem; color:var(--text-3); margin-top:3px; font-weight:500}
+.sc-status{
+  padding:5px 11px; border-radius:14px; font-size:.64rem; font-weight:800;
+  letter-spacing:.4px; white-space:nowrap;
+}
+.sc-status.lunas{background:var(--success-bg); color:#047857}
+.sc-status.nyicil{background:var(--warning-bg); color:#B45309}
+.sc-status.belum{background:var(--danger-bg); color:#B91C1C}
+.sc-prog-wrap{margin-top:14px}
+.sc-prog-info{display:flex; justify-content:space-between; font-size:.74rem; color:var(--text-2); margin-bottom:7px; font-weight:600}
+.sc-prog-info strong{color:var(--text); font-weight:800}
+.sc-prog{height:7px; background:var(--input); border-radius:10px; overflow:hidden}
+.sc-prog i{display:block; height:100%; border-radius:10px; transition:width .6s}
+.sc-prog i.lunas{background:var(--grad-green)}
+.sc-prog i.nyicil{background:var(--grad-gold)}
+.sc-prog i.belum{background:var(--grad-red)}
+.sc-actions{display:flex; gap:8px; margin-top:14px; justify-content:flex-end}
+
+/* ============ FAB BAR ============ */
+.fab-bar{
+  position:sticky; bottom:calc(var(--nav-h) + 14px);
+  display:flex; gap:10px; margin-top:16px;
+  background:rgba(244,247,251,.92); backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  padding:12px 0; border-radius:16px;
+}
+.fab-bar .btn{flex:1; padding:14px}
+
+/* ============ DATE GROUP ============ */
+.date-group{margin-bottom:20px}
+.date-label{
+  font-size:.72rem; font-weight:800; color:var(--text-3);
+  text-transform:uppercase; letter-spacing:.6px; margin:0 4px 10px;
+}
+.tx-list{background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(15,23,42,.05)}
+.tx-item{display:flex; align-items:center; gap:13px; padding:14px 16px; border-bottom:1px solid var(--border-light); cursor:pointer}
+.tx-item:last-child{border-bottom:none}
+.tx-item:active{background:var(--input)}
+.tx-ic{width:38px; height:38px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:.9rem; color:#fff; flex-shrink:0}
+.tx-ic.in{background:var(--grad-green)}
+.tx-ic.out{background:var(--grad-red)}
+.tx-body{flex:1; min-width:0}
+.tx-desc{font-weight:700; font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.tx-meta{font-size:.7rem; color:var(--text-3); margin-top:3px; font-weight:500}
+.tx-amt{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:.88rem; white-space:nowrap; letter-spacing:-.2px}
+.tx-amt.in{color:var(--success)}
+.tx-amt.out{color:var(--danger)}
+
+/* ============ MORE GRID ============ */
+.more-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+.more-tile{
+  background:#fff; border-radius:18px; padding:20px 6px 16px; text-align:center;
+  border:none; cursor:pointer; box-shadow:0 2px 10px rgba(15,23,42,.05);
+  transition:.18s; font-family:inherit;
+}
+.more-tile:active{transform:scale(.95); box-shadow:0 1px 4px rgba(15,23,42,.08)}
+.more-tile .mt-icon{
+  width:52px; height:52px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 10px; font-size:1.25rem; color:#fff;
+}
+.more-tile .mt-label{font-size:.72rem; font-weight:700; color:var(--text-2)}
+.more-tile.blue .mt-icon{background:var(--grad); box-shadow:0 8px 20px rgba(30,64,175,.28)}
+.more-tile.green .mt-icon{background:var(--grad-green); box-shadow:0 8px 20px rgba(16,185,129,.28)}
+.more-tile.gold .mt-icon{background:var(--grad-gold); box-shadow:0 8px 20px rgba(245,158,11,.28)}
+.more-tile.purple .mt-icon{background:var(--grad-ungu); box-shadow:0 8px 20px rgba(99,102,241,.28)}
+.more-tile.red .mt-icon{background:var(--grad-red); box-shadow:0 8px 20px rgba(239,68,68,.28)}
+.more-tile.teal .mt-icon{background:var(--grad-tosca); box-shadow:0 8px 20px rgba(14,116,144,.28)}
+.more-tile.pink .mt-icon{background:linear-gradient(135deg,#BE185D,#EC4899); box-shadow:0 8px 20px rgba(236,72,153,.28)}
+
+.tutor-banner{
+  margin-top:22px;
+  background:var(--grad-deep);
+  border-radius:20px; padding:22px; color:#fff; cursor:pointer;
+  box-shadow:var(--shadow-blue);
+  display:flex; align-items:center; gap:16px; position:relative; overflow:hidden;
+}
+.tutor-banner::after{
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:160px; height:160px;
+  background:radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+  border-radius:50%;
+}
+.tutor-banner .tb-ic{
+  width:52px; height:52px; border-radius:16px;
+  background:rgba(255,255,255,.22); backdrop-filter:blur(10px);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.5rem; flex-shrink:0; border:1px solid rgba(255,255,255,.2);
+}
+.tutor-banner .tb-body{flex:1; position:relative; z-index:1}
+.tutor-banner .tb-title{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1rem; letter-spacing:-.2px}
+.tutor-banner .tb-sub{font-size:.76rem; opacity:.9; margin-top:3px}
+.tutor-banner .tb-arrow{font-size:1rem; opacity:.9}
+
+/* ============ BOTTOM NAV ============ */
+.bottom-nav{
+  position:absolute; bottom:0; left:0; right:0;
+  height:calc(var(--nav-h) + var(--safe-b));
+  padding-bottom:var(--safe-b);
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border-light);
+  border-radius:24px 24px 0 0;
+  display:flex; align-items:stretch; z-index:50;
+  box-shadow:0 -10px 30px rgba(15,23,42,.06);
+}
+.nav-item{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; padding:10px 0; background:transparent; border:none;
+  color:var(--text-3); font-family:inherit; cursor:pointer; position:relative;
+  transition:.18s;
+}
+.nav-item:active{transform:scale(.92)}
+.nav-item i{font-size:1.3rem; transition:.25s cubic-bezier(.4,0,.2,1); position:relative; z-index:1}
+.nav-item .nav-label{font-size:.62rem; font-weight:700; letter-spacing:.1px; position:relative; z-index:1}
+.nav-item.active{color:var(--primary)}
+.nav-item.active i{transform:translateY(-2px) scale(1.05)}
+.nav-item.active::before{
+  content:''; position:absolute; top:8px; left:50%; transform:translateX(-50%);
+  width:52px; height:36px; background:var(--primary-50);
+  border-radius:14px; z-index:0;
+}
+.nav-item.active::after{
+  content:''; position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+  width:5px; height:5px; border-radius:50%; background:var(--primary);
+  box-shadow:0 0 10px var(--primary);
+}
+.nav-item .nav-badge{
+  position:absolute; top:6px; right:calc(50% - 26px);
+  min-width:18px; height:18px; padding:0 5px;
+  background:var(--grad-red); color:#fff; font-size:.62rem; font-weight:800;
+  border-radius:10px; display:flex; align-items:center; justify-content:center;
+  line-height:1; border:2px solid #fff; box-shadow:0 2px 6px rgba(239,68,68,.4);
+  z-index:2;
+}
+
+/* ============ MODAL ============ */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(15,23,42,.55);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  z-index:1000; display:none; align-items:flex-end; justify-content:center; padding:0;
+}
+.modal-overlay.open{display:flex; animation:fadeIn .2s}
+.modal{
+  background:#fff; width:100%; max-width:480px;
+  border-radius:28px 28px 0 0; max-height:92vh; overflow-y:auto;
+  animation:slideUp .32s cubic-bezier(.4,0,.2,1);
+  padding:20px 22px calc(24px + var(--safe-b));
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-grip{width:44px; height:5px; background:var(--border); border-radius:5px; margin:0 auto 18px}
+.modal h3{font-family:'Plus Jakarta Sans'; font-size:1.2rem; font-weight:800; margin-bottom:5px; letter-spacing:-.3px}
+.modal .modal-desc{color:var(--text-2); font-size:.85rem; margin-bottom:18px}
+.modal-actions{display:flex; gap:10px; margin-top:22px}
+.modal-actions .btn{flex:1; padding:15px}
+
+/* ============ TX FLOW (fullscreen) ============ */
+.tx-overlay{
+  position:fixed; inset:0; background:var(--bg); z-index:800;
+  display:none; flex-direction:column; max-width:480px; margin:0 auto;
+}
+.tx-overlay.open{display:flex; animation:slideUp .32s cubic-bezier(.4,0,.2,1)}
+.tx-head{
+  display:flex; align-items:center; gap:12px;
+  padding:0 16px; height:60px; padding-top:var(--safe-t);
+  background:#fff; border-bottom:1px solid var(--border-light); flex-shrink:0;
+}
+.tx-head .tx-back{
+  width:40px; height:40px; border-radius:14px; background:var(--input);
+  border:none; color:var(--text); font-size:.95rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:.15s;
+}
+.tx-head .tx-back:active{transform:scale(.92)}
+.tx-head .tx-title{flex:1; font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1.05rem; letter-spacing:-.3px}
+.tx-head .tx-step{font-size:.72rem; color:var(--text-3); font-weight:800; font-family:'Plus Jakarta Sans'}
+.tx-progress{height:4px; background:var(--input); flex-shrink:0}
+.tx-progress i{display:block; height:100%; background:var(--grad); transition:width .35s; border-radius:0 4px 4px 0}
+.tx-body{flex:1; overflow-y:auto; padding:22px 18px calc(24px + var(--safe-b))}
+.tx-body h2{font-family:'Plus Jakarta Sans'; font-size:1.35rem; font-weight:800; letter-spacing:-.4px; margin-bottom:6px}
+.tx-body .sub{color:var(--text-2); font-size:.85rem; margin-bottom:20px; line-height:1.5}
+
+.tx-opt{
+  display:flex; align-items:center; gap:14px; padding:16px;
+  background:#fff; border:2px solid var(--border); border-radius:16px;
+  margin-bottom:10px; cursor:pointer; transition:.18s;
+  font-family:inherit; text-align:left; width:100%; box-shadow:var(--shadow-xs);
+}
+.tx-opt:active{transform:scale(.98)}
+.tx-opt.selected{border-color:var(--primary); background:var(--primary-50); box-shadow:0 0 0 4px rgba(30,64,175,.08)}
+.tx-opt .opt-ic{
+  width:46px; height:46px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; color:#fff; flex-shrink:0;
+}
+.tx-opt .opt-body{flex:1; min-width:0}
+.tx-opt .opt-title{font-weight:800; font-size:.92rem; color:var(--text); letter-spacing:-.1px}
+.tx-opt .opt-desc{font-size:.74rem; color:var(--text-2); margin-top:3px; line-height:1.4}
+.tx-opt .opt-check{
+  width:24px; height:24px; border-radius:50%; border:2px solid var(--border);
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:.7rem; transition:.2s;
+}
+.tx-opt.selected .opt-check{background:var(--primary); border-color:var(--primary); box-shadow:0 0 0 4px rgba(30,64,175,.15)}
+
+.student-pick{
+  display:flex; align-items:center; gap:13px; padding:13px 15px;
+  background:#fff; border:1.5px solid var(--border); border-radius:14px;
+  margin-bottom:8px; cursor:pointer; transition:.18s;
+  font-family:inherit; text-align:left; width:100%; box-shadow:var(--shadow-xs);
+}
+.student-pick.selected{border-color:var(--primary); background:var(--primary-50); box-shadow:0 0 0 4px rgba(30,64,175,.08)}
+.student-pick .sp-av{
+  width:38px; height:38px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-size:.82rem; flex-shrink:0;
+  font-family:'Plus Jakarta Sans';
+}
+.student-pick .sp-name{flex:1; font-weight:700; font-size:.88rem; color:var(--text)}
+
+.info-box{
+  background:var(--primary-50); border-radius:14px; padding:16px 18px;
+  margin-bottom:16px; border:1px solid var(--primary-100);
+}
+.info-box.warn{background:var(--warning-bg); border-color:#FCD34D}
+.info-box.err{background:var(--danger-bg); border-color:#FECACA}
+.info-box.success{background:var(--success-bg); border-color:#A7F3D0}
+.info-box .ib-label{
+  font-size:.68rem; font-weight:800; text-transform:uppercase;
+  letter-spacing:.5px; color:var(--text-2); margin-bottom:7px;
+}
+.info-box .ib-value{
+  font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1.35rem;
+  color:var(--text); letter-spacing:-.5px;
+}
+.info-box .ib-desc{font-size:.8rem; color:var(--text-2); margin-top:7px; line-height:1.5}
+
+.period-select{margin-bottom:12px}
+.period-select .ps-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:10px; font-size:.78rem; color:var(--text-2); font-weight:700;
+}
+.period-select .ps-header button{
+  background:none; border:none; color:var(--primary); font-weight:800;
+  font-size:.75rem; cursor:pointer; font-family:inherit;
+}
+.period-list{max-height:300px; overflow-y:auto; border:1.5px solid var(--border); border-radius:14px; background:#fff}
+.period-item{display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid var(--border-light); cursor:pointer; transition:.15s}
+.period-item:active{background:var(--input)}
+.period-item:last-child{border-bottom:none}
+.period-item .pi-check{
+  width:22px; height:22px; border:2px solid var(--border); border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  color:transparent; font-size:.65rem; transition:.18s; flex-shrink:0;
+}
+.period-item.checked .pi-check{background:var(--primary); border-color:var(--primary); color:#fff}
+.period-item .pi-body{flex:1; min-width:0}
+.period-item .pi-label{font-size:.86rem; font-weight:700}
+.period-item .pi-date{font-size:.7rem; color:var(--text-3); margin-top:2px}
+.period-item.paid{opacity:.55}
+.period-item.paid .pi-label::after{content:' ✓ sudah'; color:var(--success); font-size:.7rem; margin-left:6px; font-weight:800}
+
+.amount-input{
+  display:flex; align-items:center; gap:10px; background:#fff;
+  border:2px solid var(--border); border-radius:16px; padding:16px 18px;
+  transition:.2s; box-shadow:var(--shadow-xs);
+}
+.amount-input:focus-within{border-color:var(--primary); box-shadow:0 0 0 4px rgba(30,64,175,.08)}
+.amount-input .ai-prefix{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1.2rem; color:var(--text-2)}
+.amount-input input{
+  flex:1; border:none; background:transparent; outline:none;
+  font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1.45rem;
+  color:var(--text); letter-spacing:-.4px; padding:0;
+}
+.quick-amt-row{display:flex; gap:7px; margin-top:9px; flex-wrap:wrap}
+.quick-amt{
+  background:#fff; border:1.5px solid var(--border); padding:8px 14px;
+  border-radius:22px; font-family:inherit; font-weight:700; font-size:.75rem;
+  color:var(--text-2); cursor:pointer; transition:.15s;
+}
+.quick-amt:active{background:var(--primary-50); color:var(--primary); border-color:var(--primary)}
+
+.method-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+.method-btn{
+  display:flex; align-items:center; gap:11px; padding:14px 16px;
+  background:#fff; border:2px solid var(--border); border-radius:14px;
+  cursor:pointer; font-family:inherit; text-align:left; transition:.18s;
+  box-shadow:var(--shadow-xs);
+}
+.method-btn:active{transform:scale(.98)}
+.method-btn.selected{border-color:var(--primary); background:var(--primary-50); box-shadow:0 0 0 4px rgba(30,64,175,.08)}
+.method-btn i{font-size:1rem; color:var(--text-2); width:22px; transition:.15s}
+.method-btn.selected i{color:var(--primary)}
+.method-btn .mb-label{font-size:.85rem; font-weight:700; color:var(--text)}
+
+/* ============ CONFIRM CARD ============ */
+.confirm-card{
+  background:#fff; border-radius:18px; padding:20px;
+  box-shadow:0 2px 10px rgba(15,23,42,.05); margin-bottom:16px;
+}
+.confirm-row{
+  display:flex; justify-content:space-between; padding:10px 0;
+  border-bottom:1px solid var(--border-light); font-size:.86rem;
+  align-items:center;
+}
+.confirm-row:last-child{border-bottom:none}
+.confirm-row .cr-label{color:var(--text-2); font-weight:600}
+.confirm-row .cr-value{font-weight:800; text-align:right; max-width:60%}
+.confirm-row.big{padding:14px 0}
+.confirm-row.big .cr-value{
+  font-family:'Plus Jakarta Sans'; font-size:1.1rem; color:var(--primary);
+  letter-spacing:-.3px;
+}
+
+/* ============ SUCCESS MODAL ============ */
+.success-modal{text-align:center; padding-top:8px}
+.success-modal .sm-ic{
+  width:84px; height:84px; border-radius:50%;
+  background:var(--grad-green); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.2rem; margin:0 auto 18px;
+  animation:pop .45s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 16px 40px rgba(16,185,129,.4);
+  position:relative;
+}
+.success-modal .sm-ic::before{
+  content:''; position:absolute; inset:-8px; border-radius:50%;
+  border:2px solid var(--success-bg); animation:ring 1.2s ease-out infinite;
+}
+@keyframes ring{0%{transform:scale(1);opacity:1}100%{transform:scale(1.4);opacity:0}}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-modal h3{font-family:'Plus Jakarta Sans'; font-size:1.35rem; font-weight:800; margin-bottom:8px; letter-spacing:-.3px}
+.success-modal .sub{color:var(--text-2); font-size:.86rem; margin-bottom:22px}
+.success-modal .sm-detail{background:var(--input); border-radius:14px; padding:16px 18px; margin-bottom:18px; text-align:left}
+.success-modal .sm-detail .sm-row{display:flex; justify-content:space-between; padding:6px 0; font-size:.84rem}
+.success-modal .sm-detail .sm-row .lbl{color:var(--text-2); font-weight:600}
+.success-modal .sm-detail .sm-row .val{font-weight:800}
+.success-modal .sm-detail .sm-row .val.primary{color:var(--primary); font-family:'Plus Jakarta Sans'}
+.success-modal .sm-detail .sm-row .val.success{color:var(--success)}
+.success-modal .sm-detail .sm-row .val.danger{color:var(--danger)}
+.success-modal .sm-actions{display:flex; flex-direction:column; gap:10px}
+.success-modal .sm-actions .btn{padding:15px}
+
+/* ============ TUTORIAL ============ */
+.tut-tabs{display:flex; gap:7px; margin-bottom:18px; overflow-x:auto; padding-bottom:4px}
+.tut-tabs::-webkit-scrollbar{display:none}
+.tut-tab{
+  padding:9px 15px; background:#fff; border:1.5px solid var(--border);
+  border-radius:22px; font-family:inherit; font-weight:700; font-size:.75rem;
+  color:var(--text-2); cursor:pointer; flex-shrink:0; white-space:nowrap;
+  transition:.15s; box-shadow:var(--shadow-xs);
+}
+.tut-tab.active{background:var(--grad); color:#fff; border-color:transparent; box-shadow:var(--shadow-blue)}
+.tut-card{
+  background:#fff; border-radius:22px; padding:26px 22px;
+  box-shadow:var(--shadow-sm); margin-bottom:16px;
+}
+.tut-card .tut-ic{
+  width:72px; height:72px; border-radius:22px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.1rem; color:#fff; margin:0 auto 18px;
+}
+.tut-card .tut-ic.blue{background:var(--grad); box-shadow:var(--shadow-blue)}
+.tut-card .tut-ic.green{background:var(--grad-green); box-shadow:0 12px 30px rgba(16,185,129,.28)}
+.tut-card .tut-ic.gold{background:var(--grad-gold); box-shadow:0 12px 30px rgba(245,158,11,.28)}
+.tut-card .tut-ic.purple{background:var(--grad-ungu); box-shadow:0 12px 30px rgba(99,102,241,.28)}
+.tut-card .tut-ic.teal{background:var(--grad-tosca); box-shadow:0 12px 30px rgba(14,116,144,.28)}
+.tut-card .tut-title{font-family:'Plus Jakarta Sans'; font-size:1.18rem; font-weight:800; text-align:center; margin-bottom:12px; letter-spacing:-.3px}
+.tut-card .tut-title span{color:var(--primary)}
+.tut-card .tut-text{color:var(--text-2); font-size:.88rem; line-height:1.7}
+.tut-card .tut-text ul{margin:8px 0 8px 20px; padding:0}
+.tut-card .tut-text li{margin-bottom:7px; font-size:.86rem}
+.tut-card .tut-feats{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px}
+.tut-card .tut-feat{background:var(--input); border-radius:14px; padding:14px 8px; text-align:center}
+.tut-card .tut-feat i{font-size:1.35rem; color:var(--primary); display:block; margin-bottom:6px}
+.tut-card .tut-feat .lf{font-size:.7rem; font-weight:700; color:var(--text-2)}
+
+/* ============ REPORT TABS ============ */
+.report-tabs{
+  display:flex; background:#fff; border-radius:14px; padding:5px;
+  margin-bottom:18px; gap:4px; box-shadow:var(--shadow-xs);
+}
+.report-tabs button{
+  flex:1; padding:11px; border:none; background:transparent; border-radius:10px;
+  font-family:inherit; font-weight:700; font-size:.78rem; color:var(--text-2);
+  cursor:pointer; transition:.18s;
+}
+.report-tabs button.active{background:var(--grad); color:#fff; box-shadow:var(--shadow-blue)}
+.report-panel{display:none}
+.report-panel.active{display:block; animation:fadeIn .25s}
+
+.report-hero{
+  background:var(--grad); border-radius:20px; padding:20px;
+  color:#fff; margin-bottom:16px; box-shadow:0 12px 30px rgba(30,64,175,.28);
+  position:relative; overflow:hidden;
+}
+.report-hero::before{
+  content:''; position:absolute; top:-50px; right:-40px; width:160px; height:160px;
+  background:radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+  border-radius:50%;
+}
+.report-hero .rh-label{font-size:.72rem; font-weight:700; opacity:.9; text-transform:uppercase; letter-spacing:.5px}
+.report-hero .rh-title{font-family:'Plus Jakarta Sans'; font-size:1.35rem; font-weight:800; margin-top:4px; letter-spacing:-.3px}
+.report-hero .rh-date{font-size:.78rem; opacity:.9; margin-top:4px}
+.report-hero .rh-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; position:relative; z-index:1}
+.report-hero .rh-stat{background:rgba(255,255,255,.15); border-radius:12px; padding:10px 12px; border:1px solid rgba(255,255,255,.15)}
+.report-hero .rh-stat .lbl{font-size:.65rem; opacity:.85; font-weight:600}
+.report-hero .rh-stat .val{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1rem; margin-top:2px}
+
+.chart-wrap{
+  background:#fff; border-radius:18px; padding:18px;
+  box-shadow:0 2px 10px rgba(15,23,42,.05); margin-bottom:14px;
+}
+.chart-wrap h4{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:.92rem; margin-bottom:14px; color:var(--text); display:flex; align-items:center; gap:8px}
+.chart-wrap h4 i{color:var(--primary); font-size:.85rem}
+.chart-wrap canvas{max-height:210px}
+
+.wa-template{
+  background:#fff; border-radius:18px; padding:18px;
+  box-shadow:0 2px 10px rgba(15,23,42,.05); margin-bottom:12px;
+  display:flex; gap:14px; align-items:center;
+}
+.wa-template .wt-ic{
+  width:48px; height:48px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; color:#fff; flex-shrink:0;
+}
+.wa-template .wt-body{flex:1; min-width:0}
+.wa-template .wt-title{font-weight:800; font-size:.9rem}
+.wa-template .wt-desc{font-size:.72rem; color:var(--text-3); margin-top:3px}
+.wa-template .wt-actions{display:flex; gap:6px; margin-top:9px}
+.wa-template .wt-actions .btn{padding:7px 12px; font-size:.7rem; border-radius:9px}
+
+.export-card{
+  background:#fff; border-radius:18px; padding:18px;
+  box-shadow:0 2px 10px rgba(15,23,42,.05); margin-bottom:12px;
+  display:flex; align-items:center; gap:14px; cursor:pointer;
+  transition:.18s; border:1.5px solid transparent;
+}
+.export-card:active{transform:scale(.98); background:var(--primary-50); border-color:var(--primary-100)}
+.export-card .ec-ic{
+  width:46px; height:46px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.15rem; color:#fff; flex-shrink:0;
+}
+.export-card .ec-body{flex:1; min-width:0; text-align:left}
+.export-card .ec-title{font-weight:800; font-size:.9rem; color:var(--text)}
+.export-card .ec-desc{font-size:.72rem; color:var(--text-3); margin-top:3px}
+.export-card .ec-arrow{color:var(--text-3); font-size:.85rem}
+
+/* ============ EMPTY STATE ============ */
+.empty{text-align:center; padding:48px 20px}
+.empty .emp-ic{
+  width:88px; height:88px; margin:0 auto 18px; border-radius:50%;
+  background:linear-gradient(135deg,var(--primary-50),#fff);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--primary); font-size:2.1rem;
+  border:2px dashed var(--primary-100);
+}
+.empty h3{font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1rem; color:var(--text); margin-bottom:5px}
+.empty p{color:var(--text-3); font-size:.82rem; margin-bottom:18px}
+
+/* ============ SETTINGS ============ */
+.set-group{
+  background:#fff; border-radius:18px; padding:20px;
+  box-shadow:0 2px 10px rgba(15,23,42,.05); margin-bottom:14px;
+}
+.set-group h4{
+  font-family:'Plus Jakarta Sans'; font-weight:800; font-size:.94rem;
+  margin-bottom:14px; display:flex; align-items:center; gap:9px;
+}
+.set-group h4 i{color:var(--primary)}
+.set-row{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 0; border-bottom:1px solid var(--border-light);
+  font-size:.86rem; cursor:pointer;
+}
+.set-row:last-child{border-bottom:none}
+.set-row .sr-label{color:var(--text-2); font-weight:600}
+.set-row .sr-value{font-weight:800; color:var(--text); display:flex; align-items:center; gap:6px}
+.set-row .sr-value i{font-size:.72rem; color:var(--text-3)}
+
+/* ============ THEME ============ */
+.theme-dots{display:flex; gap:12px; margin-top:10px}
+.theme-dot{
+  width:44px; height:44px; border-radius:50%; border:3px solid transparent;
+  cursor:pointer; transition:.18s; position:relative;
+  box-shadow:0 4px 12px rgba(15,23,42,.15);
+}
+.theme-dot.active{border-color:var(--text); transform:scale(1.06)}
+.theme-dot.active::after{
+  content:'\f00c'; font-family:'Font Awesome 6 Free'; font-weight:900;
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:.95rem; text-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+.theme-dot.biru{background:linear-gradient(135deg,#1E40AF,#3B82F6)}
+.theme-dot.tosca{background:var(--grad-tosca)}
+.theme-dot.ungu{background:var(--grad-ungu)}
+
+/* ============ MISC ============ */
+.mb-12{margin-bottom:12px}
+.mb-16{margin-bottom:16px}
+.mt-16{margin-top:16px}
+.hidden{display:none !important}
+.text-muted{color:var(--text-3)}
+.text-sec{color:var(--text-2)}
+.center{text-align:center}
+</style>
+</head>
+<body>
+
+<!-- ============ SPLASH ============ -->
+<div id="splash">
+  <div class="s-logo"><i class="fas fa-piggy-bank"></i></div>
+  <h1>UangKas<span>Plus</span></h1>
+  <p>Kas kelas, beres.</p>
+  <div class="s-load"></div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app">
+
+  <!-- ============ LOGIN ============ -->
+  <div id="loginScreen" class="screen active">
+    <div class="login-hero">
+      <div class="lh-logo"><i class="fas fa-piggy-bank"></i></div>
+      <h1>UangKas<span>Plus</span></h1>
+      <p>Kas kelas, beres.</p>
+    </div>
+
+    <div class="login-tabs">
+      <button id="tabTreasurer" class="active">Bendahara</button>
+      <button id="tabStudent">Siswa</button>
+    </div>
+
+    <div class="login-card" id="loginBendahara">
+      <p class="greet">Halo, <strong id="greetTreasurer">Bendahara</strong></p>
+      <input type="password" id="pinInput" class="pin-input tnum" maxlength="6" inputmode="numeric" placeholder="••••" autocomplete="off">
+      <button class="btn primary" id="btnLoginPin"><i class="fas fa-arrow-right"></i> Masuk</button>
+      <div class="err" id="loginErr"></div>
+    </div>
+
+    <div class="login-card hidden" id="loginSiswa">
+      <p class="greet">Masukkan <strong>kode akses</strong> dari bendahara</p>
+      <input type="text" id="studentCode" class="student-input" maxlength="8" placeholder="ABCD12" autocomplete="off">
+      <button class="btn primary" id="btnLoginStudent"><i class="fas fa-sign-in-alt"></i> Masuk sebagai Siswa</button>
+      <div class="err" id="studentErr"></div>
+    </div>
+
+    <div class="login-foot">
+      <button id="btnResetPin">Lupa PIN? Reset ke default</button>
+    </div>
+  </div>
+
+  <!-- ============ SETUP WIZARD ============ -->
+  <div id="setupScreen" class="screen">
+    <div class="setup-head">
+      <div class="step-pill" id="setupStepPill">Langkah 1 dari 3</div>
+      <h2 id="setupTitle">Info Kelas</h2>
+      <p id="setupDesc">Isi identitas kelas kamu dulu.</p>
+    </div>
+    <div class="setup-body" id="setupBody"></div>
+    <div class="setup-nav">
+      <button class="btn ghost hidden" id="setupBack"><i class="fas fa-arrow-left"></i> Kembali</button>
+      <button class="btn primary" id="setupNext">Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- ============ MAIN APP ============ -->
+  <div id="mainApp" class="screen">
+
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon"><i class="fas fa-piggy-bank"></i></div>
+        <div class="brand-text">
+          <div class="brand-title">UangKas<span>Plus</span></div>
+          <div class="brand-sub" id="headerClass">—</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="role-chip treasurer" id="rolePill">Bendahara</span>
+        <button class="avatar-btn" id="btnProfile"><span id="avatarInitial">B</span></button>
+      </div>
+    </header>
+
+    <main class="app-content" id="appContent">
+
+      <!-- ============ BERANDA ============ -->
+      <section id="page-dashboard" class="page active">
+        <div class="hero-card">
+          <div class="hero-top">
+            <div class="hero-label"><i class="fas fa-piggy-bank"></i> Saldo Kas</div>
+            <div class="hero-badge">AKTIF</div>
+          </div>
+          <div class="hero-nominal tnum" id="heroNominal">Rp0</div>
+          <div class="hero-detail">
+            <div class="hd-item"><div class="hd-label"><i class="fas fa-arrow-down"></i> Masuk</div><div class="hd-value tnum" id="heroIn">Rp0</div></div>
+            <div class="hd-item"><div class="hd-label"><i class="fas fa-arrow-up"></i> Keluar</div><div class="hd-value tnum" id="heroOut">Rp0</div></div>
+            <div class="hd-item"><div class="hd-label"><i class="fas fa-users"></i> Siswa</div><div class="hd-value tnum" id="heroStudents">0</div></div>
+          </div>
+        </div>
+
+        <div class="quick-grid">
+          <button class="qa" onclick="openTransaction('in')">
+            <div class="qa-icon blue"><i class="fas fa-plus"></i></div>
+            <div class="qa-label">Kas</div>
+          </button>
+          <button class="qa" onclick="navigateTo('payments')">
+            <div class="qa-icon green"><i class="fas fa-check"></i></div>
+            <div class="qa-label">Bayar</div>
+          </button>
+          <button class="qa" onclick="navigateTo('targets')">
+            <div class="qa-icon gold"><i class="fas fa-bullseye"></i></div>
+            <div class="qa-label">Target</div>
+          </button>
+          <button class="qa" onclick="navigateTo('more')">
+            <div class="qa-icon purple"><i class="fas fa-ellipsis-h"></i></div>
+            <div class="qa-label">Lainnya</div>
+          </button>
+        </div>
+
+        <div class="section-label">Status Bulan Ini</div>
+        <div class="stat2">
+          <div class="stat-card">
+            <div class="st-label"><i class="fas fa-check-circle" style="color:var(--success)"></i> Lunas</div>
+            <div class="st-value tnum" id="statPaid">0</div>
+            <div class="st-sub" id="statPaidSub">dari 0 siswa</div>
+            <div class="prog"><i id="statPaidBar" style="width:0%"></i></div>
+          </div>
+          <div class="stat-card">
+            <div class="st-label"><i class="fas fa-clock" style="color:var(--danger)"></i> Belum</div>
+            <div class="st-value tnum" id="statUnpaid">0</div>
+            <div class="st-sub">siswa</div>
+            <div class="prog warn"><i id="statUnpaidBar" style="width:0%"></i></div>
+          </div>
+        </div>
+
+        <div class="section-label">Target Utama</div>
+        <div id="dashTarget"></div>
+
+        <div class="section-label">
+          Aktivitas Terbaru
+          <span class="link" onclick="navigateTo('transactions')">Lihat semua</span>
+        </div>
+        <div class="activity-list" id="dashActivity"></div>
+      </section>
+
+      <!-- ============ BAYAR ============ -->
+      <section id="page-payments" class="page">
+        <h2 class="page-title">Pembayaran</h2>
+        <p class="page-sub">Kelola status pembayaran kas siswa.</p>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchPayment" placeholder="Cari siswa...">
+          </div>
+        </div>
+
+        <div class="chips" id="payChips">
+          <button class="chip active" data-filter="all">Semua</button>
+          <button class="chip" data-filter="lunas">Lunas</button>
+          <button class="chip" data-filter="nyicil">Nyicil</button>
+          <button class="chip" data-filter="belum">Belum</button>
+        </div>
+
+        <div id="paymentList"></div>
+
+        <div class="fab-bar">
+          <button class="btn ghost sm" id="btnCopyReport"><i class="fas fa-copy"></i> Copy Laporan</button>
+          <button class="btn primary sm" onclick="openTransaction('in')"><i class="fas fa-plus"></i> Bayar</button>
+        </div>
+      </section>
+
+      <!-- ============ RIWAYAT ============ -->
+      <section id="page-transactions" class="page">
+        <h2 class="page-title">Riwayat</h2>
+        <p class="page-sub">Semua pemasukan dan pengeluaran kas.</p>
+
+        <div class="chips" id="txChips">
+          <button class="chip active" data-filter="all">Semua</button>
+          <button class="chip" data-filter="in">Masuk</button>
+          <button class="chip" data-filter="out">Keluar</button>
+          <button class="chip" data-filter="kas">Iuran</button>
+        </div>
+
+        <div id="txList"></div>
+      </section>
+
+      <!-- ============ LAINNYA ============ -->
+      <section id="page-more" class="page">
+        <h2 class="page-title">Lainnya</h2>
+        <p class="page-sub">Fitur tambahan untuk mengelola kelas.</p>
+
+        <div class="more-grid">
+          <button class="more-tile gold" onclick="navigateTo('targets')"><div class="mt-icon"><i class="fas fa-bullseye"></i></div><div class="mt-label">Target</div></button>
+          <button class="more-tile purple" onclick="navigateTo('students')"><div class="mt-icon"><i class="fas fa-users"></i></div><div class="mt-label">Siswa</div></button>
+          <button class="more-tile teal" onclick="navigateTo('inventory')"><div class="mt-icon"><i class="fas fa-boxes"></i></div><div class="mt-label">Inventaris</div></button>
+          <button class="more-tile blue" onclick="navigateTo('reports')"><div class="mt-icon"><i class="fas fa-chart-bar"></i></div><div class="mt-label">Laporan</div></button>
+          <button class="more-tile green" onclick="navigateTo('qris')"><div class="mt-icon"><i class="fas fa-qrcode"></i></div><div class="mt-label">QRIS</div></button>
+          <button class="more-tile red" onclick="navigateTo('settings')"><div class="mt-icon"><i class="fas fa-cog"></i></div><div class="mt-label">Atur</div></button>
+        </div>
+
+        <div class="tutor-banner" onclick="navigateTo('tutorial')">
+          <div class="tb-ic"><i class="fas fa-graduation-cap"></i></div>
+          <div class="tb-body">
+            <div class="tb-title">Butuh Bantuan?</div>
+            <div class="tb-sub">Pelajari cara pakai UangKasPlus</div>
+          </div>
+          <i class="fas fa-arrow-right tb-arrow"></i>
+        </div>
+
+        <div class="center text-muted" style="margin-top:22px;font-size:.72rem;font-weight:600">UangKasPlus v3.1 · Banking Edition</div>
+      </section>
+
+      <!-- ============ SISWA ============ -->
+      <section id="page-students" class="page">
+        <h2 class="page-title">Kelola Siswa</h2>
+        <p class="page-sub">Tambah, edit, atau hapus siswa kelas.</p>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchStudent" placeholder="Cari siswa...">
+          </div>
+          <button class="btn primary sm" id="btnAddStudent"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <div id="studentList"></div>
+      </section>
+
+      <!-- ============ TARGET ============ -->
+      <section id="page-targets" class="page">
+        <h2 class="page-title">Target Kelas</h2>
+        <p class="page-sub">Target dana yang mau dicapai bareng.</p>
+        <button class="btn primary block mb-16" id="btnAddTarget"><i class="fas fa-plus"></i> Tambah Target</button>
+        <div id="targetList"></div>
+      </section>
+
+      <!-- ============ INVENTARIS ============ -->
+      <section id="page-inventory" class="page">
+        <h2 class="page-title">Inventaris</h2>
+        <p class="page-sub">Barang yang dipegang bendahara.</p>
+        <button class="btn primary block mb-16" id="btnAddInventory"><i class="fas fa-plus"></i> Tambah Barang</button>
+        <div id="inventoryList"></div>
+      </section>
+
+      <!-- ============ LAPORAN ============ -->
+      <section id="page-reports" class="page">
+        <h2 class="page-title">Laporan</h2>
+        <p class="page-sub">Lihat grafik, share ke WA, atau export.</p>
+
+        <div class="report-tabs">
+          <button class="active" data-rtab="ringkasan">Ringkasan</button>
+          <button data-rtab="share">Share WA</button>
+          <button data-rtab="export">Export</button>
+        </div>
+
+        <div class="report-panel active" id="rtab-ringkasan">
+          <div class="report-hero">
+            <div class="rh-label">Laporan Kas</div>
+            <div class="rh-title" id="reportClassName">—</div>
+            <div class="rh-date" id="reportDate">—</div>
+            <div class="rh-stats">
+              <div class="rh-stat"><div class="lbl">Total Saldo</div><div class="val tnum" id="reportBalance">Rp0</div></div>
+              <div class="rh-stat"><div class="lbl">Total Siswa</div><div class="val tnum" id="reportStudents">0</div></div>
+            </div>
+          </div>
+
+          <div class="chart-wrap"><h4><i class="fas fa-chart-line"></i> Pemasukan 7 Hari Terakhir</h4><canvas id="chartIncome"></canvas></div>
+          <div class="chart-wrap"><h4><i class="fas fa-chart-pie"></i> Status Siswa</h4><canvas id="chartStatus"></canvas></div>
+          <div id="reportSummary"></div>
+        </div>
+
+        <div class="report-panel" id="rtab-share">
+          <div class="wa-template">
+            <div class="wt-ic" style="background:var(--grad-green)"><i class="fas fa-bullhorn"></i></div>
+            <div class="wt-body">
+              <div class="wt-title">Rekap Harian</div>
+              <div class="wt-desc">Ringkasan update hari ini (tanggal lengkap)</div>
+              <div class="wt-actions"><button class="btn ghost" onclick="shareTemplate('daily')">Preview</button></div>
+            </div>
+          </div>
+          <div class="wa-template">
+            <div class="wt-ic" style="background:var(--grad)"><i class="fas fa-chart-line"></i></div>
+            <div class="wt-body">
+              <div class="wt-title">Rekap Mingguan</div>
+              <div class="wt-desc">Progress minggu ini</div>
+              <div class="wt-actions"><button class="btn ghost" onclick="shareTemplate('weekly')">Preview</button></div>
+            </div>
+          </div>
+          <div class="wa-template">
+            <div class="wt-ic" style="background:var(--grad-red)"><i class="fas fa-bell"></i></div>
+            <div class="wt-body">
+              <div class="wt-title">Reminder Tunggakan</div>
+              <div class="wt-desc">Daftar siswa yang belum bayar</div>
+              <div class="wt-actions"><button class="btn ghost" onclick="shareTemplate('reminder')">Preview</button></div>
+            </div>
+          </div>
+          <div class="wa-template">
+            <div class="wt-ic" style="background:var(--grad-gold)"><i class="fas fa-receipt"></i></div>
+            <div class="wt-body">
+              <div class="wt-title">Nota Per Siswa</div>
+              <div class="wt-desc">Kirim bukti bayar ke satu siswa</div>
+              <div class="wt-actions"><button class="btn ghost" onclick="pickStudentForNota()">Pilih Siswa</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-panel" id="rtab-export">
+          <div class="export-card" onclick="exportJSON()">
+            <div class="ec-ic" style="background:var(--grad)"><i class="fas fa-database"></i></div>
+            <div class="ec-body"><div class="ec-title">Export JSON (Backup)</div><div class="ec-desc">Simpan semua data untuk backup</div></div>
+            <i class="fas fa-chevron-right ec-arrow"></i>
+          </div>
+          <div class="export-card" onclick="exportCSV()">
+            <div class="ec-ic" style="background:var(--grad-green)"><i class="fas fa-file-csv"></i></div>
+            <div class="ec-body"><div class="ec-title">Export CSV (Excel)</div><div class="ec-desc">Tanggal lengkap: hari, tanggal, jam</div></div>
+            <i class="fas fa-chevron-right ec-arrow"></i>
+          </div>
+          <div class="export-card" onclick="printReport()">
+            <div class="ec-ic" style="background:var(--grad-gold)"><i class="fas fa-file-pdf"></i></div>
+            <div class="ec-body"><div class="ec-title">Cetak / PDF</div><div class="ec-desc">Laporan lengkap siap cetak</div></div>
+            <i class="fas fa-chevron-right ec-arrow"></i>
+          </div>
+          <div class="export-card" onclick="showQRReport()">
+            <div class="ec-ic" style="background:var(--grad-ungu)"><i class="fas fa-qrcode"></i></div>
+            <div class="ec-body"><div class="ec-title">QR Code Laporan</div><div class="ec-desc">Share ringkasan via QR</div></div>
+            <i class="fas fa-chevron-right ec-arrow"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ QRIS ============ -->
+      <section id="page-qris" class="page">
+        <h2 class="page-title">QRIS</h2>
+        <p class="page-sub">QR pembayaran kelas.</p>
+        <button class="btn primary block mb-16" id="btnAddQRIS"><i class="fas fa-plus"></i> Upload QRIS</button>
+        <div id="qrisList"></div>
+      </section>
+
+      <!-- ============ PENGATURAN ============ -->
+      <section id="page-settings" class="page">
+        <h2 class="page-title">Pengaturan</h2>
+        <p class="page-sub">Kelola identitas & konfigurasi.</p>
+
+        <div class="set-group">
+          <h4><i class="fas fa-school"></i> Identitas Kelas</h4>
+          <div class="f-group"><label>Nama Kelas</label><input type="text" id="setClass"></div>
+          <div class="f-group"><label>Nama Bendahara</label><input type="text" id="setTreasurer"></div>
+          <div class="f-group"><label>PIN Bendahara (4-6 digit)</label><input type="password" id="setPin" maxlength="6" placeholder="Biarkan kosong jika tidak diubah"></div>
+          <button class="btn primary block" id="btnSaveSettings"><i class="fas fa-save"></i> Simpan</button>
+        </div>
+
+        <div class="set-group">
+          <h4><i class="fas fa-coins"></i> Konfigurasi Iuran</h4>
+          <div class="set-row"><span class="sr-label">Nominal</span><span class="sr-value" id="setIuranNominal">Rp0</span></div>
+          <div class="set-row"><span class="sr-label">Periode</span><span class="sr-value" id="setIuranPeriode">Mingguan</span></div>
+          <div class="set-row"><span class="sr-label">Mulai Berlaku</span><span class="sr-value" id="setIuranStart">-</span></div>
+          <button class="btn ghost block mt-16" id="btnEditIuran"><i class="fas fa-edit"></i> Ubah Iuran</button>
+        </div>
+
+        <div class="set-group">
+          <h4><i class="fas fa-palette"></i> Tema Kartu Saldo</h4>
+          <div class="theme-dots" id="themeDots">
+            <div class="theme-dot biru active" data-theme="biru"></div>
+            <div class="theme-dot tosca" data-theme="tosca"></div>
+            <div class="theme-dot ungu" data-theme="ungu"></div>
+          </div>
+        </div>
+
+        <div class="set-group">
+          <h4><i class="fas fa-user-graduate"></i> Kode Akses Siswa</h4>
+          <p style="font-size:.78rem;color:var(--text-2);margin-bottom:12px;line-height:1.5">Bagikan kode ini ke siswa agar mereka bisa cek status kas sendiri (read-only).</p>
+          <button class="btn ghost block" onclick="showAllCodes()"><i class="fas fa-list"></i> Lihat Semua Kode</button>
+        </div>
+
+        <div class="set-group">
+          <h4><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Zona Berbahaya</h4>
+          <button class="btn danger block" id="btnResetAll"><i class="fas fa-trash"></i> Reset Semua Data</button>
+        </div>
+      </section>
+
+      <!-- ============ TUTORIAL ============ -->
+      <section id="page-tutorial" class="page">
+        <h2 class="page-title">Tutorial</h2>
+        <p class="page-sub">Panduan lengkap pakai UangKasPlus.</p>
+        <div class="tut-tabs" id="tutTabs"></div>
+        <div id="tutContent"></div>
+      </section>
+
+    </main>
+
+    <!-- ============ BOTTOM NAV ============ -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-page="dashboard"><i class="fas fa-home"></i><span class="nav-label">Beranda</span></button>
+      <button class="nav-item" data-page="payments"><i class="fas fa-credit-card"></i><span class="nav-label">Bayar</span><span class="nav-badge hidden" id="navBadge">0</span></button>
+      <button class="nav-item" data-page="transactions"><i class="fas fa-list-alt"></i><span class="nav-label">Riwayat</span></button>
+      <button class="nav-item" data-page="more"><i class="fas fa-th-large"></i><span class="nav-label">Lainnya</span></button>
+    </nav>
+
+  </div>
+</div>
+
+<!-- ============ TRANSACTION FLOW ============ -->
+<div class="tx-overlay" id="txOverlay">
+  <div class="tx-head">
+    <button class="tx-back" id="txBack"><i class="fas fa-times"></i></button>
+    <div class="tx-title" id="txTitle">Tambah Transaksi</div>
+    <div class="tx-step" id="txStep">1 / 5</div>
+  </div>
+  <div class="tx-progress"><i id="txProgressBar" style="width:20%"></i></div>
+  <div class="tx-body" id="txBody"></div>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-grip"></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UANGKASPLUS v3.1 — Banking Edition (Dark Blue)
+   ============================================================ */
+
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('splash').classList.add('hide'),1500);
+});
+
+const DB_KEY='ukp_v3_data';
+
+function defaultData(){
+  return {
+    version:'v3',
+    isFirstTime:true,
+    className:'',
+    treasurerName:'',
+    treasurerPin:'1234',
+    students:[],
+    transactions:[],
+    iuranRules:[],
+    academicStart:null,
+    graduationDate:null,
+    targets:[],
+    inventory:[],
+    notes:[],
+    qrisList:[],
+    settings:{theme:'biru'}
+  };
+}
+
+let data=null;
+function loadData(){
+  const raw=localStorage.getItem(DB_KEY);
+  if(raw){
+    try{
+      const p=JSON.parse(raw);
+      const d=defaultData();
+      for(const k in d) if(!(k in p)) p[k]=d[k];
+      data=p; return;
+    }catch(e){}
+  }
+  data=defaultData(); saveData();
+}
+function saveData(){ localStorage.setItem(DB_KEY,JSON.stringify(data)); }
+
+function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function fmtRp(n){ return 'Rp'+Number(n||0).toLocaleString('id-ID'); }
+function fmtRpShort(n){
+  n=Number(n||0);
+  if(n>=1_000_000) return 'Rp'+(n/1_000_000).toFixed(1).replace('.0','')+'jt';
+  if(n>=1_000) return 'Rp'+(n/1_000).toFixed(0)+'rb';
+  return 'Rp'+n;
+}
+function fmtDate(iso,opts){ const d=new Date(iso); return d.toLocaleDateString('id-ID',opts||{day:'numeric',month:'short',year:'numeric'}); }
+function fmtDateLong(iso){ const d=new Date(iso); return d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}); }
+function fmtDateFull(iso){
+  const d=new Date(iso);
+  return d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function fmtTime(iso){ const d=new Date(iso); return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}).replace('.',':'); }
+function fmtDateTimeFull(iso){ return fmtDateFull(iso)+' · '+fmtTime(iso); }
+function dateKey(iso){ const d=new Date(iso); return d.toISOString().slice(0,10); }
+function todayLabel(){
+  const t=new Date(); const y=new Date(); y.setDate(y.getDate()-1);
+  const td=t.toISOString().slice(0,10), yd=y.toISOString().slice(0,10);
+  return {today:td,yesterday:yd};
+}
+function initials(name){
+  const parts=(name||'?').trim().split(/\s+/);
+  if(parts.length>=2) return (parts[0][0]+parts[1][0]).toUpperCase();
+  return (name||'?').slice(0,2).toUpperCase();
+}
+function avatarColor(name){
+  const colors=['#1E40AF','#047857','#B45309','#B91C1C','#6D28D9','#BE185D','#0E7490','#4338CA','#B45309','#0F766E'];
+  let h=0; for(let i=0;i<(name||'').length;i++) h=(h*31+name.charCodeAt(i))|0;
+  return colors[Math.abs(h)%colors.length];
+}
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ============ IURAN / PERIODE LOGIC ============ */
+function getActiveRule(){
+  if(!data.iuranRules.length) return {nominal:10000,periode:'mingguan'};
+  const sorted=[...data.iuranRules].sort((a,b)=>new Date(b.berlakuMulai)-new Date(a.berlakuMulai));
+  return sorted[0];
+}
+
+function generatePeriods(fromDate,toDate,rule){
+  rule=rule||getActiveRule();
+  const periods=[];
+  let cursor=new Date(fromDate); cursor.setHours(0,0,0,0);
+  const to=new Date(toDate); to.setHours(23,59,59,999);
+  let idx=1;
+  while(cursor<=to && idx<=400){
+    const start=new Date(cursor);
+    const end=new Date(cursor);
+    if(rule.periode==='bulanan'){ end.setMonth(end.getMonth()+1); end.setDate(end.getDate()-1); }
+    else { end.setDate(end.getDate()+6); }
+    const id='P'+start.toISOString().slice(0,10);
+    const label = rule.periode==='bulanan'
+      ? start.toLocaleDateString('id-ID',{month:'long',year:'numeric'})
+      : 'Minggu ke-'+idx+' · '+fmtDate(start,{day:'numeric',month:'short'});
+    periods.push({
+      id, index:idx, start:new Date(start), end:new Date(end),
+      amount:Number(rule.nominal), label,
+      dateRange: fmtDate(start,{day:'numeric',month:'short'})+' - '+fmtDate(end,{day:'numeric',month:'short',year:'numeric'})
+    });
+    cursor=new Date(end); cursor.setDate(cursor.getDate()+1); idx++;
+  }
+  return periods;
+}
+
+function getPaidPeriodIds(studentId){
+  const set=new Set();
+  data.transactions.forEach(t=>{
+    if(t.type==='in' && t.studentId===studentId && Array.isArray(t.covers)){
+      t.covers.forEach(id=>set.add(id));
+    }
+  });
+  return set;
+}
+
+function getStudentPeriods(studentId){
+  const s=data.students.find(x=>x.id===studentId);
+  if(!s) return [];
+  const rule=getActiveRule();
+  const start = data.academicStart ? new Date(data.academicStart) : new Date(s.joinDate||Date.now());
+  const end = new Date();
+  return generatePeriods(start,end,rule);
+}
+
+function getUnpaidPeriods(studentId){
+  const all=getStudentPeriods(studentId);
+  const paid=getPaidPeriodIds(studentId);
+  return all.filter(p=>!paid.has(p.id));
+}
+
+function getStudentStatus(studentId){
+  const all=getStudentPeriods(studentId);
+  const paid=getPaidPeriodIds(studentId);
+  const paidCount=all.filter(p=>paid.has(p.id)).length;
+  const unpaidCount=all.length-paidCount;
+  const totalObligation=all.reduce((s,p)=>s+p.amount,0);
+  const totalPaid=data.transactions
+    .filter(t=>t.type==='in'&&t.studentId===studentId)
+    .reduce((s,t)=>s+Number(t.amount||0),0);
+  let status='belum';
+  if(unpaidCount===0 && all.length>0) status='lunas';
+  else if(paidCount>0) status='nyicil';
+  return {all,paidCount,unpaidCount,totalObligation,totalPaid,status,coverage:paidCount};
+}
+
+/* ============ ROLE ============ */
+let userMode='treasurer';
+let currentStudentId=null;
+
+/* ============ NAVIGATION ============ */
+function navigateTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target=document.getElementById('page-'+page);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav=document.querySelector(`.nav-item[data-page="${page}"]`);
+  if(nav) nav.classList.add('active');
+  document.getElementById('appContent').scrollTop=0;
+  renderAll();
+  if(page==='reports') setTimeout(renderCharts,80);
+}
+window.navigateTo=navigateTo;
+
+document.querySelectorAll('.nav-item').forEach(n=>{
+  n.addEventListener('click',()=>{
+    if(userMode==='student'){
+      const p=n.dataset.page;
+      if(!['dashboard','transactions','more'].includes(p)){
+        alert('Mode siswa hanya bisa lihat Beranda, Riwayat, dan Lainnya.');
+        return;
+      }
+    }
+    navigateTo(n.dataset.page);
+  });
+});
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function checkAuth(){
+  if(data.isFirstTime){
+    showScreen('setupScreen');
+    setupStep=1;
+    renderSetup();
+    return;
+  }
+  showScreen('loginScreen');
+  document.getElementById('greetTreasurer').textContent=data.treasurerName||'Bendahara';
+  document.getElementById('pinInput').value='';
+  document.getElementById('loginErr').textContent='';
+  document.getElementById('studentCode').value='';
+  document.getElementById('studentErr').textContent='';
+  switchLoginTab('treasurer');
+}
+
+function switchLoginTab(role){
+  document.getElementById('loginBendahara').classList.toggle('hidden',role!=='treasurer');
+  document.getElementById('loginSiswa').classList.toggle('hidden',role!=='student');
+  document.getElementById('tabTreasurer').classList.toggle('active',role==='treasurer');
+  document.getElementById('tabStudent').classList.toggle('active',role==='student');
+  if(role==='treasurer') document.getElementById('pinInput').focus();
+  else document.getElementById('studentCode').focus();
+}
+
+document.getElementById('tabTreasurer').addEventListener('click',()=>switchLoginTab('treasurer'));
+document.getElementById('tabStudent').addEventListener('click',()=>switchLoginTab('student'));
+
+document.getElementById('btnLoginPin').addEventListener('click',()=>{
+  const pin=document.getElementById('pinInput').value.trim();
+  if(pin===data.treasurerPin){
+    userMode='treasurer'; currentStudentId=null;
+    document.getElementById('rolePill').textContent='Bendahara';
+    document.getElementById('rolePill').className='role-chip treasurer';
+    enterApp();
+  } else {
+    document.getElementById('loginErr').textContent='PIN salah. Coba lagi.';
+    document.getElementById('pinInput').value='';
+    document.getElementById('pinInput').focus();
+  }
+});
+document.getElementById('pinInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('btnLoginPin').click(); });
+
+document.getElementById('btnLoginStudent').addEventListener('click',()=>{
+  const code=document.getElementById('studentCode').value.trim().toUpperCase();
+  if(!code){ document.getElementById('studentErr').textContent='Masukkan kode akses.'; return; }
+  const student=data.students.find(s=>(s.accessCode||'').toUpperCase()===code);
+  if(student){
+    userMode='student'; currentStudentId=student.id;
+    document.getElementById('rolePill').textContent='Siswa';
+    document.getElementById('rolePill').className='role-chip student';
+    enterApp();
+  } else {
+    document.getElementById('studentErr').textContent='Kode tidak ditemukan.';
+  }
+});
+document.getElementById('studentCode').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('btnLoginStudent').click(); });
+
+document.getElementById('btnResetPin').addEventListener('click',()=>{
+  if(!confirm('Reset PIN ke default "1234"?')) return;
+  data.treasurerPin='1234'; saveData();
+  alert('PIN direset ke 1234. Silakan login ulang.');
+});
+
+function enterApp(){
+  showScreen('mainApp');
+  const cls=data.className||'-';
+  document.getElementById('headerClass').textContent=cls;
+  document.getElementById('avatarInitial').textContent=userMode==='student'
+    ? initials(data.students.find(s=>s.id===currentStudentId)?.name||'?')
+    : initials(data.treasurerName||'B');
+  applyTheme();
+  navigateTo('dashboard');
+  renderAll();
+}
+
+/* ============ SETUP WIZARD ============ */
+let setupStep=1;
+let setupTemp={};
+
+function renderSetup(){
+  const pill=document.getElementById('setupStepPill');
+  const title=document.getElementById('setupTitle');
+  const desc=document.getElementById('setupDesc');
+  const body=document.getElementById('setupBody');
+  const back=document.getElementById('setupBack');
+  const next=document.getElementById('setupNext');
+
+  pill.textContent=`Langkah ${setupStep} dari 3`;
+  back.classList.toggle('hidden',setupStep===1);
+  next.innerHTML = setupStep<3 ? 'Lanjut <i class="fas fa-arrow-right"></i>' : '<i class="fas fa-rocket"></i> Mulai';
+
+  if(setupStep===1){
+    title.textContent='Info Kelas';
+    desc.textContent='Isi identitas kelas kamu dulu.';
+    body.innerHTML=`
+      <div class="f-group"><label>Nama Kelas</label><input type="text" id="s1Class" placeholder="Contoh: 11 IPA 2" value="${esc(setupTemp.className||'')}"></div>
+      <div class="f-group"><label>Nama Bendahara</label><input type="text" id="s1Treasurer" placeholder="Nama kamu" value="${esc(setupTemp.treasurerName||'')}"></div>
+      <div class="f-group"><label>PIN Bendahara (4-6 digit)</label><input type="password" id="s1Pin" maxlength="6" inputmode="numeric" placeholder="••••" value="${esc(setupTemp.pin||'')}"><div class="hint">PIN ini buat login kamu sebagai bendahara</div></div>
+    `;
+  } else if(setupStep===2){
+    title.textContent='Konfigurasi Iuran';
+    desc.textContent='Atur nominal dan periode bayar kas.';
+    body.innerHTML=`
+      <div class="f-group"><label>Nominal Iuran per Periode</label><input type="number" id="s2Nominal" placeholder="10000" value="${setupTemp.nominal||10000}"></div>
+      <div class="f-group"><label>Periode Pembayaran</label>
+        <select id="s2Periode">
+          <option value="mingguan" ${setupTemp.periode==='mingguan'?'selected':''}>Mingguan</option>
+          <option value="bulanan" ${setupTemp.periode==='bulanan'?'selected':''}>Bulanan</option>
+        </select>
+      </div>
+      <div class="f-group"><label>Tanggal Mulai Berlaku</label><input type="date" id="s2Start" value="${setupTemp.start||new Date().toISOString().slice(0,10)}"><div class="hint">Tanggal ini jadi titik awal perhitungan minggu/bulan</div></div>
+    `;
+  } else {
+    title.textContent='Daftar Siswa';
+    desc.textContent='Masukkan nama-nama siswa di kelas kamu.';
+    const list=setupTemp.students||[];
+    body.innerHTML=`
+      <div class="f-group"><label>Nama Siswa</label>
+        <div style="display:flex;gap:8px"><input type="text" id="s3Name" placeholder="Ketik nama, tekan Tambah"><button class="btn primary sm" id="s3Add" style="flex-shrink:0;padding:0 18px"><i class="fas fa-plus"></i></button></div>
+      </div>
+      <div class="student-list-setup" id="s3List">
+        ${list.length===0?'<div class="center text-muted" style="padding:18px;font-size:.82rem">Belum ada siswa</div>':list.map((s,i)=>`<div class="item"><span class="num">${i+1}</span><span class="nm">${esc(s.name)}</span><button data-idx="${i}"><i class="fas fa-times"></i></button></div>`).join('')}
+      </div>
+      <div class="hint" style="margin-top:10px">Total: <strong>${list.length}</strong> siswa</div>
+    `;
+    const addBtn=document.getElementById('s3Add');
+    const input=document.getElementById('s3Name');
+    const addStudent=()=>{
+      const name=input.value.trim();
+      if(!name) return;
+      setupTemp.students=[...(setupTemp.students||[]),{name}];
+      renderSetup();
+      setTimeout(()=>document.getElementById('s3Name').focus(),50);
+    };
+    addBtn.addEventListener('click',addStudent);
+    input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addStudent(); }});
+    document.querySelectorAll('#s3List button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const idx=Number(b.dataset.idx);
+        setupTemp.students=setupTemp.students.filter((_,i)=>i!==idx);
+        renderSetup();
+      });
+    });
+    setTimeout(()=>input.focus(),100);
+  }
+}
+
+document.getElementById('setupNext').addEventListener('click',()=>{
+  if(setupStep===1){
+    const cls=document.getElementById('s1Class').value.trim();
+    const treasurer=document.getElementById('s1Treasurer').value.trim();
+    const pin=document.getElementById('s1Pin').value.trim();
+    if(!cls){ alert('Nama kelas wajib diisi.'); return; }
+    if(!treasurer){ alert('Nama bendahara wajib diisi.'); return; }
+    if(!pin||pin.length<4||pin.length>6){ alert('PIN harus 4-6 digit.'); return; }
+    setupTemp.className=cls; setupTemp.treasurerName=treasurer; setupTemp.pin=pin;
+    setupStep=2; renderSetup();
+  } else if(setupStep===2){
+    const nominal=Number(document.getElementById('s2Nominal').value);
+    const periode=document.getElementById('s2Periode').value;
+    const start=document.getElementById('s2Start').value;
+    if(!nominal||nominal<1){ alert('Nominal iuran tidak valid.'); return; }
+    if(!start){ alert('Tanggal mulai wajib diisi.'); return; }
+    setupTemp.nominal=nominal; setupTemp.periode=periode; setupTemp.start=start;
+    setupStep=3; renderSetup();
+  } else {
+    const list=setupTemp.students||[];
+    if(list.length===0){ if(!confirm('Belum ada siswa. Lanjut tanpa siswa?')) return; }
+    data.isFirstTime=false;
+    data.className=setupTemp.className;
+    data.treasurerName=setupTemp.treasurerName;
+    data.treasurerPin=setupTemp.pin;
+    data.academicStart=setupTemp.start;
+    data.iuranRules=[{
+      id:genId(),
+      nominal:setupTemp.nominal,
+      periode:setupTemp.periode,
+      berlakuMulai:setupTemp.start
+    }];
+    data.students=list.map(s=>({
+      id:genId(),
+      name:s.name,
+      joinDate:setupTemp.start,
+      isActive:true,
+      accessCode:makeAccessCode()
+    }));
+    saveData();
+    userMode='treasurer';
+    document.getElementById('rolePill').textContent='Bendahara';
+    document.getElementById('rolePill').className='role-chip treasurer';
+    enterApp();
+  }
+});
+document.getElementById('setupBack').addEventListener('click',()=>{
+  if(setupStep>1){ setupStep--; renderSetup(); }
+});
+
+function makeAccessCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code='';
+  for(let i=0;i<6;i++) code+=chars[Math.floor(Math.random()*chars.length)];
+  if(data.students.some(s=>s.accessCode===code)) return makeAccessCode();
+  return code;
+}
+
+/* ============ PROFILE ============ */
+document.getElementById('btnProfile').addEventListener('click',()=>{
+  if(userMode==='student'){
+    const s=data.students.find(x=>x.id===currentStudentId);
+    openModal(`
+      <h3>👤 ${esc(s?.name||'Siswa')}</h3>
+      <p class="modal-desc">Kamu login sebagai siswa (read-only).</p>
+      <div class="confirm-card">
+        <div class="confirm-row"><span class="cr-label">Kelas</span><span class="cr-value">${esc(data.className)}</span></div>
+        <div class="confirm-row"><span class="cr-label">Kode Akses</span><span class="cr-value" style="font-family:monospace;letter-spacing:2px">${esc(s?.accessCode||'-')}</span></div>
+      </div>
+      <div class="modal-actions"><button class="btn danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</button></div>
+    `);
+  } else {
+    openModal(`
+      <h3>👤 ${esc(data.treasurerName||'Bendahara')}</h3>
+      <p class="modal-desc">Bendahara ${esc(data.className)}</p>
+      <div class="confirm-card">
+        <div class="confirm-row"><span class="cr-label">Kelas</span><span class="cr-value">${esc(data.className)}</span></div>
+        <div class="confirm-row"><span class="cr-label">Total Siswa</span><span class="cr-value">${data.students.length} siswa</span></div>
+        <div class="confirm-row"><span class="cr-label">Total Transaksi</span><span class="cr-value">${data.transactions.length}</span></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" onclick="closeModal()">Tutup</button>
+        <button class="btn danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+      </div>
+    `);
+  }
+});
+
+function logout(){
+  if(!confirm('Keluar dari akun?')) return;
+  closeModal();
+  userMode='treasurer'; currentStudentId=null;
+  checkAuth();
+}
+window.logout=logout;
+
+/* ============ MODAL ============ */
+function openModal(html){
+  document.getElementById('modalContent').innerHTML=html;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+window.openModal=openModal; window.closeModal=closeModal;
+document.getElementById('modalOverlay').addEventListener('click',e=>{
+  if(e.target===e.currentTarget) closeModal();
+});
+
+/* ============================================================
+   TRANSACTION FLOW
+   ============================================================ */
+let txState={};
+
+function openTransaction(prefillType){
+  if(userMode==='student'){ alert('Hanya bendahara yang bisa mencatat transaksi.'); return; }
+  txState={
+    step:1,
+    type:prefillType||null,
+    category:null,
+    studentId:null,
+    coverageMode:null,
+    selectedPeriods:[],
+    amount:0,
+    expected:0,
+    method:'tunai',
+    refNumber:'',
+    date:new Date().toISOString().slice(0,16),
+    note:'',
+    recipient:'',
+    purpose:'',
+    unpaidPeriods:[],
+    allPeriods:[]
+  };
+  document.getElementById('txOverlay').classList.add('open');
+  renderTxStep();
+}
+
+function closeTx(){ document.getElementById('txOverlay').classList.remove('open'); }
+document.getElementById('txBack').addEventListener('click',()=>{
+  if(txState.step===1){ closeTx(); }
+  else { txState.step--; renderTxStep(); }
+});
+
+function getTxSteps(){
+  const t=txState.type;
+  if(t==='in') return ['type','category','student','coverage','amount','method','confirm'];
+  else if(t==='out') return ['type','outCategory','outDetail','outMethod','confirm'];
+  else return ['type'];
+}
+
+function renderTxStep(){
+  const body=document.getElementById('txBody');
+  const title=document.getElementById('txTitle');
+  const stepEl=document.getElementById('txStep');
+  const bar=document.getElementById('txProgressBar');
+
+  const steps=getTxSteps();
+  const total=steps.length;
+  const stepIdx=Math.min(txState.step,total);
+  const curStep=steps[stepIdx-1];
+
+  stepEl.textContent=`${stepIdx} / ${total}`;
+  bar.style.width=((stepIdx/total)*100)+'%';
+
+  switch(curStep){
+    case 'type': title.textContent='Tambah Transaksi'; body.innerHTML=stepType(); break;
+    case 'category': title.textContent='Kategori Masuk'; body.innerHTML=stepInCategory(); break;
+    case 'outCategory': title.textContent='Kategori Keluar'; body.innerHTML=stepOutCategory(); break;
+    case 'student': title.textContent='Pilih Siswa'; body.innerHTML=stepStudent(); break;
+    case 'coverage': title.textContent='Cakupan Pembayaran'; body.innerHTML=stepCoverage(); break;
+    case 'amount': title.textContent='Nominal & Metode'; body.innerHTML=stepAmount(); break;
+    case 'method': title.textContent='Metode & Tanggal'; body.innerHTML=stepMethod(); break;
+    case 'outDetail': title.textContent='Detail Pengeluaran'; body.innerHTML=stepOutDetail(); break;
+    case 'outMethod': title.textContent='Metode & Tanggal'; body.innerHTML=stepOutMethod(); break;
+    case 'confirm': title.textContent='Konfirmasi'; body.innerHTML=stepConfirm(); break;
+  }
+  bindTxStep(curStep);
+}
+
+function stepType(){
+  return `
+    <h2>Mau catat apa?</h2>
+    <p class="sub">Pilih jenis transaksi yang ingin dicatat.</p>
+    <button class="tx-opt ${txState.type==='in'?'selected':''}" data-act="pick-type" data-val="in">
+      <div class="opt-ic" style="background:var(--grad-green)"><i class="fas fa-arrow-down"></i></div>
+      <div class="opt-body"><div class="opt-title">Uang Masuk</div><div class="opt-desc">Pembayaran kas, tunggakan, atau pemasukan lain</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <button class="tx-opt ${txState.type==='out'?'selected':''}" data-act="pick-type" data-val="out">
+      <div class="opt-ic" style="background:var(--grad-red)"><i class="fas fa-arrow-up"></i></div>
+      <div class="opt-body"><div class="opt-title">Uang Keluar</div><div class="opt-desc">Pembelian, kegiatan, atau pengeluaran lain</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <div class="modal-actions" style="margin-top:22px">
+      <button class="btn ghost" onclick="closeTx()">Batal</button>
+      <button class="btn primary" id="txNextBtn" ${!txState.type?'disabled':''}>Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function stepInCategory(){
+  return `
+    <h2>Kategori Pemasukan</h2>
+    <p class="sub">Pilih jenis pemasukan ini.</p>
+    <button class="tx-opt ${txState.category==='kas'?'selected':''}" data-act="pick-cat" data-val="kas">
+      <div class="opt-ic" style="background:var(--grad)"><i class="fas fa-coins"></i></div>
+      <div class="opt-body"><div class="opt-title">Pembayaran Kas</div><div class="opt-desc">Bayar iuran rutin mingguan/bulanan</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <button class="tx-opt ${txState.category==='tunggakan'?'selected':''}" data-act="pick-cat" data-val="tunggakan">
+      <div class="opt-ic" style="background:var(--grad-red)"><i class="fas fa-clock"></i></div>
+      <div class="opt-body"><div class="opt-title">Pembayaran Tunggakan</div><div class="opt-desc">Bayar tunggakan minggu/bulan yang lewat</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <button class="tx-opt ${txState.category==='lain'?'selected':''}" data-act="pick-cat" data-val="lain">
+      <div class="opt-ic" style="background:var(--grad-ungu)"><i class="fas fa-hand-holding-usd"></i></div>
+      <div class="opt-body"><div class="opt-title">Pemasukan Lain</div><div class="opt-desc">Donasi, denda, atau uang masuk lain</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <div class="modal-actions" style="margin-top:22px">
+      <button class="btn ghost" id="txPrevBtn">Kembali</button>
+      <button class="btn primary" id="txNextBtn" ${!txState.category?'disabled':''}>Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function stepOutCategory(){
+  return `
+    <h2>Kategori Pengeluaran</h2>
+    <p class="sub">Pilih jenis pengeluaran ini.</p>
+    <button class="tx-opt ${txState.category==='pembelian'?'selected':''}" data-act="pick-cat" data-val="pembelian">
+      <div class="opt-ic" style="background:var(--grad-gold)"><i class="fas fa-shopping-cart"></i></div>
+      <div class="opt-body"><div class="opt-title">Pembelian</div><div class="opt-desc">Beli alat tulis, kebersihan, dsb</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <button class="tx-opt ${txState.category==='kegiatan'?'selected':''}" data-act="pick-cat" data-val="kegiatan">
+      <div class="opt-ic" style="background:var(--grad)"><i class="fas fa-users"></i></div>
+      <div class="opt-body"><div class="opt-title">Kegiatan Kelas</div><div class="opt-desc">Acara, lomba, study tour, dsb</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <button class="tx-opt ${txState.category==='pengembalian'?'selected':''}" data-act="pick-cat" data-val="pengembalian">
+      <div class="opt-ic" style="background:var(--grad-green)"><i class="fas fa-undo"></i></div>
+      <div class="opt-body"><div class="opt-title">Pengembalian Uang</div><div class="opt-desc">Kembalikan kelebihan bayar</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <button class="tx-opt ${txState.category==='pengeluaran-lain'?'selected':''}" data-act="pick-cat" data-val="pengeluaran-lain">
+      <div class="opt-ic" style="background:linear-gradient(135deg,#475569,#94A3B8)"><i class="fas fa-ellipsis-h"></i></div>
+      <div class="opt-body"><div class="opt-title">Pengeluaran Lain</div><div class="opt-desc">Di luar kategori di atas</div></div>
+      <div class="opt-check"><i class="fas fa-check"></i></div>
+    </button>
+    <div class="modal-actions" style="margin-top:22px">
+      <button class="btn ghost" id="txPrevBtn">Kembali</button>
+      <button class="btn primary" id="txNextBtn" ${!txState.category?'disabled':''}>Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function stepStudent(){
+  const students=data.students.filter(s=>s.isActive!==false);
+  if(students.length===0){
+    return `<h2>Belum Ada Siswa</h2><p class="sub">Tambahkan siswa dulu di menu Lainnya → Siswa.</p>
+      <div class="modal-actions"><button class="btn primary" onclick="closeTx();navigateTo('students')">Tambah Siswa</button></div>`;
+  }
+  const filtered=students.filter(s=>{
+    const q=(document.getElementById('searchStudentTx')?.value||'').toLowerCase();
+    return !q||s.name.toLowerCase().includes(q);
+  });
+  return `
+    <h2>Pilih Siswa</h2>
+    <p class="sub">Siapa yang bayar?</p>
+    <div class="search-box mb-12">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchStudentTx" placeholder="Cari nama...">
+    </div>
+    <div style="max-height:380px;overflow-y:auto">
+      ${filtered.map(s=>{
+        const st=getStudentStatus(s.id);
+        const badge = st.status==='lunas'?'<span class="sc-status lunas">Lunas</span>'
+          : st.status==='nyicil'?`<span class="sc-status nyicil">Nyicil ${st.coverage}/${st.all.length}</span>`
+          : `<span class="sc-status belum">Belum</span>`;
+        return `<button class="student-pick ${txState.studentId===s.id?'selected':''}" data-act="pick-student" data-val="${s.id}">
+          <div class="sp-av" style="background:${avatarColor(s.name)}">${initials(s.name)}</div>
+          <div class="sp-name">${esc(s.name)}</div>
+          ${badge}
+        </button>`;
+      }).join('')}
+    </div>
+    <div class="modal-actions" style="margin-top:18px">
+      <button class="btn ghost" id="txPrevBtn">Kembali</button>
+      <button class="btn primary" id="txNextBtn" ${!txState.studentId?'disabled':''}>Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function stepCoverage(){
+  if(!txState.studentId) return `<p>Pilih siswa dulu.</p>`;
+  const s=data.students.find(x=>x.id===txState.studentId);
+  const unpaid=getUnpaidPeriods(txState.studentId);
+  const all=getStudentPeriods(txState.studentId);
+  const totalUnpaid=unpaid.reduce((a,p)=>a+p.amount,0);
+
+  const modes=[
+    {v:'tunggakan',t:'Tunggakan Terlebih Dahulu',d:`Bayar ${unpaid.length} periode yang belum dibayar (${fmtRp(totalUnpaid)})`,ic:'clock',color:'var(--grad-red)'},
+    {v:'minggu',t:'Pilih Minggu Tertentu',d:'Centang minggu/bulan yang mau dibayar',ic:'calendar-check',color:'var(--grad)'},
+    {v:'semua',t:'Bayar Semua Tunggakan',d:'Langsung lunas semua yang belum dibayar',ic:'check-double',color:'var(--grad-green)'},
+    {v:'sampai-lulus',t:'Bayar Sampai Lulus',d:'Bayar di muka sampai akhir',ic:'graduation-cap',color:'var(--grad-gold)'},
+  ];
+
+  return `
+    <h2>Cakupan Pembayaran</h2>
+    <p class="sub">${esc(s.name)} · ${unpaid.length} periode belum dibayar</p>
+
+    <div class="info-box ${unpaid.length===0?'success':''}">
+      <div class="ib-label">Tunggakan Saat Ini</div>
+      <div class="ib-value">${unpaid.length} periode · ${fmtRp(totalUnpaid)}</div>
+      <div class="ib-desc">Total periode sejak bergabung: ${all.length}</div>
+    </div>
+
+    ${modes.map(m=>`
+      <button class="tx-opt ${txState.coverageMode===m.v?'selected':''}" data-act="pick-cov" data-val="${m.v}">
+        <div class="opt-ic" style="background:${m.color}"><i class="fas fa-${m.ic}"></i></div>
+        <div class="opt-body"><div class="opt-title">${m.t}</div><div class="opt-desc">${m.d}</div></div>
+        <div class="opt-check"><i class="fas fa-check"></i></div>
+      </button>
+    `).join('')}
+
+    <div id="covDetail"></div>
+
+    <div class="modal-actions" style="margin-top:22px">
+      <button class="btn ghost" id="txPrevBtn">Kembali</button>
+      <button class="btn primary" id="txNextBtn" ${!txState.coverageMode?'disabled':''}>Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function renderCoverageDetail(){
+  const box=document.getElementById('covDetail');
+  if(!box) return;
+  const mode=txState.coverageMode;
+  if(!mode){ box.innerHTML=''; return; }
+
+  if(mode==='minggu'){
+    const all=getStudentPeriods(txState.studentId);
+    const paid=getPaidPeriodIds(txState.studentId);
+    box.innerHTML=`
+      <div class="period-select">
+        <div class="ps-header"><span>Pilih periode (${all.length} tersedia)</span><button data-act="select-all">Pilih Semua Belum Dibayar</button></div>
+        <div class="period-list">
+          ${all.map(p=>{
+            const isPaid=paid.has(p.id);
+            const checked=txState.selectedPeriods.includes(p.id);
+            return `<div class="period-item ${checked?'checked':''} ${isPaid?'paid':''}" data-act="toggle-period" data-val="${p.id}">
+              <div class="pi-check"><i class="fas fa-check"></i></div>
+              <div class="pi-body"><div class="pi-label">${esc(p.label)}</div><div class="pi-date">${p.dateRange} · ${fmtRp(p.amount)}</div></div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } else if(mode==='tunggakan' || mode==='semua'){
+    const unpaid=getUnpaidPeriods(txState.studentId);
+    txState.selectedPeriods=unpaid.map(p=>p.id);
+    const total=unpaid.reduce((a,p)=>a+p.amount,0);
+    txState.expected=total;
+    box.innerHTML=`
+      <div class="info-box success">
+        <div class="ib-label">Akan Terbayar</div>
+        <div class="ib-value tnum">${unpaid.length} periode</div>
+        <div class="ib-desc">${unpaid.slice(0,5).map(p=>'✓ '+esc(p.label)).join('<br>')}${unpaid.length>5?`<br>+${unpaid.length-5} lagi`:''}</div>
+      </div>
+    `;
+  } else if(mode==='sampai-lulus'){
+    const grad=data.graduationDate || (()=>{ const d=new Date(); d.setFullYear(d.getFullYear()+2); return d.toISOString(); })();
+    const rule=getActiveRule();
+    const start=data.academicStart?new Date(data.academicStart):new Date();
+    const allUntilGrad=generatePeriods(start,new Date(grad),rule);
+    const paid=getPaidPeriodIds(txState.studentId);
+    const unpaidUntilGrad=allUntilGrad.filter(p=>!paid.has(p.id));
+    txState.selectedPeriods=unpaidUntilGrad.map(p=>p.id);
+    const total=unpaidUntilGrad.reduce((a,p)=>a+p.amount,0);
+    txState.expected=total;
+    box.innerHTML=`
+      <div class="info-box warn">
+        <div class="ib-label">Bayar Sampai Lulus</div>
+        <div class="ib-value tnum">${unpaidUntilGrad.length} periode</div>
+        <div class="ib-desc">Perkiraan total: <strong>${fmtRp(total)}</strong></div>
+      </div>
+    `;
+  }
+  if(mode==='minggu'){
+    const all=getStudentPeriods(txState.studentId);
+    const total=all.filter(p=>txState.selectedPeriods.includes(p.id)).reduce((a,p)=>a+p.amount,0);
+    txState.expected=total;
+  }
+}
+
+function stepAmount(){
+  let expected=txState.expected;
+  if(txState.coverageMode==='minggu'){
+    const all=getStudentPeriods(txState.studentId);
+    expected=all.filter(p=>txState.selectedPeriods.includes(p.id)).reduce((a,p)=>a+p.amount,0);
+  }
+  txState.expected=expected;
+  const s=data.students.find(x=>x.id===txState.studentId);
+
+  return `
+    <h2>Nominal Pembayaran</h2>
+    <p class="sub">${esc(s.name)}</p>
+
+    <div class="info-box">
+      <div class="ib-label">Nominal Seharusnya</div>
+      <div class="ib-value tnum">${fmtRp(expected)}</div>
+      <div class="ib-desc">${txState.selectedPeriods.length} periode terpilih</div>
+    </div>
+
+    <div class="f-group">
+      <label>Nominal Dibayar</label>
+      <div class="amount-input">
+        <span class="ai-prefix">Rp</span>
+        <input type="tel" inputmode="numeric" id="amountInput" value="${txState.amount||expected}" placeholder="0">
+      </div>
+      <div class="quick-amt-row">
+        <button class="quick-amt" data-act="set-amt" data-val="${expected}">Uang Pas</button>
+        <button class="quick-amt" data-act="set-amt" data-val="${Math.floor(expected/2)}">Setengah</button>
+        <button class="quick-amt" data-act="set-amt" data-val="0">Reset</button>
+      </div>
+    </div>
+
+    <div class="f-group">
+      <label>Metode Pembayaran</label>
+      <div class="method-grid">
+        ${[
+          {v:'tunai',t:'Tunai',ic:'money-bill'},
+          {v:'transfer',t:'Transfer',ic:'university'},
+          {v:'qris',t:'QRIS',ic:'qrcode'},
+          {v:'lainnya',t:'Lainnya',ic:'ellipsis-h'}
+        ].map(m=>`
+          <button class="method-btn ${txState.method===m.v?'selected':''}" data-act="pick-method" data-val="${m.v}">
+            <i class="fas fa-${m.ic}"></i><span class="mb-label">${m.t}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div id="amountFeedback"></div>
+
+    <div class="modal-actions" style="margin-top:22px">
+      <button class="btn ghost" id="txPrevBtn">Kembali</button>
+      <button class="btn primary" id="txNextBtn">Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function updateAmountFeedback(){
+  const input=document.getElementById('amountInput');
+  const box=document.getElementById('amountFeedback');
+  if(!input||!box) return;
+  const amt=Number(input.value||0);
+  txState.amount=amt;
+  const expected=txState.expected;
+  if(amt===0){ box.innerHTML=''; return; }
+  if(amt>=expected){
+    box.innerHTML=`<div class="info-box success"><div class="ib-label">✓ Lunas</div><div class="ib-desc">Pembayaran mencukupi. Semua periode terpilih akan ditandai lunas.</div></div>`;
+  } else {
+    const kurang=expected-amt;
+    box.innerHTML=`<div class="info-box warn"><div class="ib-label">⚠ Pembayaran Belum Cukup</div><div class="ib-value tnum">Kurang ${fmtRp(kurang)}</div><div class="ib-desc">Sistem akan mengalokasikan ke periode paling awal dulu.</div></div>`;
+  }
+}
+
+function stepMethod(){
+  return `
+    <h2>Tanggal & Keterangan</h2>
+    <p class="sub">Catat kapan pembayaran dilakukan.</p>
+
+    <div class="f-group"><label>Tanggal & Waktu</label><input type="datetime-local" id="dateInput" value="${txState.date}"></div>
+    <div class="f-group"><label>Keterangan (opsional)</label><input type="text" id="noteInput" placeholder="Contoh: bayar via transfer BCA" value="${esc(txState.note||'')}"></div>
+
+    <div class="modal-actions" style="margin-top:22px">
+      <button class="btn ghost" id="txPrevBtn">Kembali</button>
+      <button class="btn primary" id="txNextBtn">Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function stepOutDetail(){
+  return `
+    <h2>Detail Pengeluaran</h2>
+    <p class="sub">Isi jumlah dan keperluan.</p>
+
+    <div class="f-group"><label>Nominal</label>
+      <div class="amount-input"><span class="ai-prefix">Rp</span><input type="tel" inputmode="numeric" id="outAmount" value="${txState.amount||''}" placeholder="0"></div>
+    </div>
+    <div class="f-group"><label>Penerima / Toko (opsional)</label><input type="text" id="outRecipient" placeholder="Contoh: Toko ABC" value="${esc(txState.recipient||'')}"></div>
+    <div class="f-group"><label>Keperluan</label><input type="text" id="outPurpose" placeholder="Contoh: Beli spidol & penghapus" value="${esc(txState.purpose||'')}"></div>
+    <div class="f-group"><label>Metode</label>
+      <div class="method-grid">
+        ${[
+          {v:'tunai',t:'Tunai',ic:'money-bill'},
+          {v:'transfer',t:'Transfer',ic:'university'},
+          {v:'qris',t:'QRIS',ic:'qrcode'},
+          {v:'lainnya',t:'Lainnya',ic:'ellipsis-h'}
+        ].map(m=>`
+          <button class="method-btn ${txState.method===m.v?'selected':''}" data-act="pick-method" data-val="${m.v}">
+            <i class="fas fa-${m.ic}"></i><span class="mb-label">${m.t}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:22px">
+      <button class="btn ghost" id="txPrevBtn">Kembali</button>
+      <button class="btn primary" id="txNextBtn">Lanjut <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+}
+
+function stepOutMethod(){ return stepMethod(); }
+
+function stepConfirm(){
+  const s=txState.type==='in'?data.students.find(x=>x.id===txState.studentId):null;
+  const categoryLabel={
+    'kas':'Pembayaran Kas','tunggakan':'Pembayaran Tunggakan','lain':'Pemasukan Lain',
+    'pembelian':'Pembelian','kegiatan':'Kegiatan Kelas','pengembalian':'Pengembalian Uang','pengeluaran-lain':'Pengeluaran Lain'
+  };
+
+  const balanceBefore=data.transactions.reduce((a,t)=>a+(t.type==='in'?Number(t.amount):-Number(t.amount)),0);
+  const balanceAfter=txState.type==='in'?balanceBefore+Number(txState.amount):balanceBefore-Number(txState.amount);
+
+  if(txState.type==='in'){
+    const amt=Number(txState.amount);
+    const expected=Number(txState.expected);
+    const isLunas=amt>=expected;
+    return `
+      <h2>Periksa Transaksi</h2>
+      <p class="sub">Pastikan data sudah benar sebelum disimpan.</p>
+
+      <div class="confirm-card">
+        <div class="confirm-row"><span class="cr-label">Siswa</span><span class="cr-value">${esc(s?.name||'-')}</span></div>
+        <div class="confirm-row"><span class="cr-label">Kategori</span><span class="cr-value">${categoryLabel[txState.category]||'-'}</span></div>
+        <div class="confirm-row"><span class="cr-label">Cakupan</span><span class="cr-value">${txState.selectedPeriods.length} periode</span></div>
+        <div class="confirm-row"><span class="cr-label">Seharusnya</span><span class="cr-value">${fmtRp(expected)}</span></div>
+        <div class="confirm-row big"><span class="cr-label">Dibayar</span><span class="cr-value">${fmtRp(amt)}</span></div>
+        <div class="confirm-row"><span class="cr-label">Status</span><span class="cr-value" style="color:${isLunas?'var(--success)':'var(--warning)'}">${isLunas?'✓ Lunas':'⚠ Kurang '+fmtRp(expected-amt)}</span></div>
+        <div class="confirm-row"><span class="cr-label">Metode</span><span class="cr-value">${txState.method}</span></div>
+        <div class="confirm-row"><span class="cr-label">Tanggal</span><span class="cr-value">${fmtDateFull(txState.date)} · ${txState.date.slice(11,16)}</span></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="txPrevBtn">Kembali</button>
+        <button class="btn primary" id="txSave">Simpan Transaksi</button>
+      </div>
+    `;
+  } else {
+    return `
+      <h2>Periksa Pengeluaran</h2>
+      <p class="sub">Pastikan data sudah benar.</p>
+
+      <div class="confirm-card">
+        <div class="confirm-row"><span class="cr-label">Kategori</span><span class="cr-value">${categoryLabel[txState.category]||'-'}</span></div>
+        <div class="confirm-row"><span class="cr-label">Penerima</span><span class="cr-value">${esc(txState.recipient||'-')}</span></div>
+        <div class="confirm-row"><span class="cr-label">Keperluan</span><span class="cr-value">${esc(txState.purpose||'-')}</span></div>
+        <div class="confirm-row big"><span class="cr-label">Nominal</span><span class="cr-value" style="color:var(--danger)">-${fmtRp(txState.amount)}</span></div>
+        <div class="confirm-row"><span class="cr-label">Metode</span><span class="cr-value">${txState.method}</span></div>
+        <div class="confirm-row"><span class="cr-label">Tanggal</span><span class="cr-value">${fmtDateFull(txState.date)} · ${txState.date.slice(11,16)}</span></div>
+      </div>
+
+      <div class="info-box">
+        <div class="ib-label">Saldo Setelah Transaksi</div>
+        <div class="ib-value tnum">${fmtRp(balanceAfter)}</div>
+        <div class="ib-desc">Saldo sebelum: ${fmtRp(balanceBefore)}</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="txPrevBtn">Kembali</button>
+        <button class="btn primary" id="txSave">Simpan</button>
+      </div>
+    `;
+  }
+}
+
+function bindTxStep(step){
+  const body=document.getElementById('txBody');
+
+  const nextBtn=document.getElementById('txNextBtn');
+  if(nextBtn){
+    nextBtn.addEventListener('click',()=>{
+      if(step==='type' && !txState.type){ alert('Pilih jenis transaksi.'); return; }
+      if(step==='category' && !txState.category){ alert('Pilih kategori.'); return; }
+      if(step==='outCategory' && !txState.category){ alert('Pilih kategori.'); return; }
+      if(step==='student' && !txState.studentId){ alert('Pilih siswa.'); return; }
+      if(step==='coverage'){
+        if(!txState.coverageMode){ alert('Pilih cakupan.'); return; }
+        if(txState.coverageMode==='minggu' && txState.selectedPeriods.length===0){ alert('Pilih minimal 1 periode.'); return; }
+      }
+      if(step==='amount'){
+        const amt=Number(document.getElementById('amountInput').value||0);
+        if(amt<=0){ alert('Masukkan nominal.'); return; }
+        txState.amount=amt;
+      }
+      if(step==='method'){
+        txState.date=document.getElementById('dateInput').value;
+        txState.note=document.getElementById('noteInput').value;
+      }
+      if(step==='outDetail'){
+        const amt=Number(document.getElementById('outAmount').value||0);
+        if(amt<=0){ alert('Masukkan nominal.'); return; }
+        txState.amount=amt;
+        txState.recipient=document.getElementById('outRecipient').value;
+        txState.purpose=document.getElementById('outPurpose').value;
+      }
+      if(step==='outMethod'){
+        txState.date=document.getElementById('dateInput').value;
+        txState.note=document.getElementById('noteInput').value;
+      }
+      txState.step++; renderTxStep();
+    });
+  }
+
+  const prevBtn=document.getElementById('txPrevBtn');
+  if(prevBtn) prevBtn.addEventListener('click',()=>{ txState.step--; renderTxStep(); });
+
+  const saveBtn=document.getElementById('txSave');
+  if(saveBtn) saveBtn.addEventListener('click',saveTx);
+
+  body.querySelectorAll('[data-act="pick-type"]').forEach(el=>{
+    el.addEventListener('click',()=>{ txState.type=el.dataset.val; txState.category=null; renderTxStep(); });
+  });
+  body.querySelectorAll('[data-act="pick-cat"]').forEach(el=>{
+    el.addEventListener('click',()=>{ txState.category=el.dataset.val; renderTxStep(); });
+  });
+  body.querySelectorAll('[data-act="pick-student"]').forEach(el=>{
+    el.addEventListener('click',()=>{ txState.studentId=el.dataset.val; renderTxStep(); });
+  });
+  body.querySelectorAll('[data-act="pick-cov"]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      txState.coverageMode=el.dataset.val;
+      txState.selectedPeriods=[];
+      renderTxStep();
+      setTimeout(()=>renderCoverageDetail(),10);
+    });
+  });
+  body.querySelectorAll('[data-act="toggle-period"]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const id=el.dataset.val;
+      if(txState.selectedPeriods.includes(id)) txState.selectedPeriods=txState.selectedPeriods.filter(x=>x!==id);
+      else txState.selectedPeriods.push(id);
+      renderCoverageDetail();
+      el.classList.toggle('checked');
+    });
+  });
+  body.querySelectorAll('[data-act="select-all"]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const all=getStudentPeriods(txState.studentId);
+      const paid=getPaidPeriodIds(txState.studentId);
+      txState.selectedPeriods=all.filter(p=>!paid.has(p.id)).map(p=>p.id);
+      renderTxStep();
+      setTimeout(()=>renderCoverageDetail(),10);
+    });
+  });
+  body.querySelectorAll('[data-act="pick-method"]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      txState.method=el.dataset.val;
+      body.querySelectorAll('[data-act="pick-method"]').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+  });
+  body.querySelectorAll('[data-act="set-amt"]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const v=el.dataset.val;
+      const input=document.getElementById('amountInput');
+      if(input){ input.value=v; updateAmountFeedback(); }
+    });
+  });
+  const amtInput=document.getElementById('amountInput');
+  if(amtInput){
+    amtInput.addEventListener('input',updateAmountFeedback);
+    amtInput.addEventListener('focus',()=>setTimeout(()=>amtInput.select(),50));
+  }
+  const searchTx=document.getElementById('searchStudentTx');
+  if(searchTx){
+    searchTx.addEventListener('input',()=>{
+      const q=searchTx.value;
+      renderTxStep();
+      const newSearch=document.getElementById('searchStudentTx');
+      if(newSearch){ newSearch.value=q; newSearch.focus(); }
+    });
+  }
+  if(step==='coverage'){ setTimeout(()=>renderCoverageDetail(),10); }
+}
+
+function saveTx(){
+  const now=new Date().toISOString();
+  const balanceBefore=data.transactions.reduce((a,t)=>a+(t.type==='in'?Number(t.amount):-Number(t.amount)),0);
+  const amount=Number(txState.amount);
+  const balanceAfter=txState.type==='in'?balanceBefore+amount:balanceBefore-amount;
+
+  let covers=[];
+  if(txState.type==='in' && (txState.category==='kas' || txState.category==='tunggakan')){
+    const all=getStudentPeriods(txState.studentId);
+    const alreadyPaid=getPaidPeriodIds(txState.studentId);
+    let selected=all.filter(p=>txState.selectedPeriods.includes(p.id) && !alreadyPaid.has(p.id));
+    selected.sort((a,b)=>a.start-b.start);
+    let remaining=amount;
+    for(const p of selected){
+      if(remaining<=0) break;
+      if(remaining>=p.amount){ covers.push(p.id); remaining-=p.amount; }
+      else break;
+    }
+  }
+
+  const tx={
+    id:genId(),
+    type:txState.type,
+    category:txState.category||null,
+    studentId:txState.type==='in'?txState.studentId:null,
+    amount,
+    expected:txState.type==='in'?Number(txState.expected):amount,
+    covers,
+    method:txState.method,
+    refNumber:txState.refNumber||'',
+    date:new Date(txState.date).toISOString(),
+    note:txState.note||'',
+    recipient:txState.type==='out'?(txState.recipient||''):'',
+    purpose:txState.type==='out'?(txState.purpose||''):'',
+    recordedBy:data.treasurerName||'Bendahara',
+    balanceBefore, balanceAfter
+  };
+  data.transactions.push(tx);
+  saveData();
+
+  showSuccessModal(tx, covers);
+  closeTx();
+  renderAll();
+}
+
+function showSuccessModal(tx, covers){
+  const isIn=tx.type==='in';
+  const s=isIn?data.students.find(x=>x.id===tx.studentId):null;
+  const unpaid=getUnpaidPeriods(tx.studentId);
+  const totalUnpaid=unpaid.reduce((a,p)=>a+p.amount,0);
+
+  const detail = isIn ? `
+    <div class="sm-detail">
+      <div class="sm-row"><span class="lbl">Siswa</span><span class="val">${esc(s?.name||'-')}</span></div>
+      <div class="sm-row"><span class="lbl">Dibayar</span><span class="val primary tnum">${fmtRp(tx.amount)}</span></div>
+      <div class="sm-row"><span class="lbl">Mencakup</span><span class="val">${covers.length} periode</span></div>
+      ${unpaid.length>0?`<div class="sm-row"><span class="lbl">Sisa Tunggakan</span><span class="val danger tnum">${unpaid.length} · ${fmtRp(totalUnpaid)}</span></div>`:
+        `<div class="sm-row"><span class="lbl">Status</span><span class="val success">✓ LUNAS semua</span></div>`}
+    </div>
+  ` : `
+    <div class="sm-detail">
+      <div class="sm-row"><span class="lbl">Kategori</span><span class="val">${esc(tx.category)}</span></div>
+      <div class="sm-row"><span class="lbl">Nominal</span><span class="val danger tnum">-${fmtRp(tx.amount)}</span></div>
+      <div class="sm-row"><span class="lbl">Saldo Akhir</span><span class="val primary tnum">${fmtRp(tx.balanceAfter)}</span></div>
+    </div>
+  `;
+
+  openModal(`
+    <div class="success-modal">
+      <div class="sm-ic"><i class="fas fa-check"></i></div>
+      <h3>${isIn?'Pembayaran Tercatat':'Pengeluaran Tercatat'}</h3>
+      <p class="sub">Transaksi berhasil disimpan</p>
+      ${detail}
+      <div class="sm-actions">
+        <button class="btn primary" onclick="closeModal();openTransaction('${isIn?'in':'out'}')">
+          <i class="fas fa-plus"></i> Tambah Transaksi Lagi
+        </button>
+        <button class="btn ghost" onclick="closeModal();navigateTo('${isIn?'payments':'transactions'}')">
+          <i class="fas fa-list"></i> Lihat Daftar
+        </button>
+      </div>
+    </div>
+  `);
+}
+
+window.openTransaction=openTransaction;
+window.closeTx=closeTx;
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderAll(){
+  renderHeader();
+  renderDashboard();
+  renderPayments();
+  renderTransactions();
+  renderStudentsPage();
+  renderTargets();
+  renderInventory();
+  renderQris();
+  renderSettings();
+  renderTutorialTabs();
+  renderNavBadge();
+}
+
+function renderHeader(){
+  document.getElementById('headerClass').textContent=data.className||'-';
+  document.getElementById('avatarInitial').textContent=userMode==='student'
+    ? initials(data.students.find(s=>s.id===currentStudentId)?.name||'?')
+    : initials(data.treasurerName||'B');
+}
+
+function renderNavBadge(){
+  const unpaid=getUnpaidStudents().length;
+  const badge=document.getElementById('navBadge');
+  if(unpaid>0){ badge.textContent=unpaid; badge.classList.remove('hidden'); }
+  else badge.classList.add('hidden');
+}
+
+function getTotalBalance(){
+  return data.transactions.reduce((a,t)=>a+(t.type==='in'?Number(t.amount):-Number(t.amount)),0);
+}
+function getTotalIn(){ return data.transactions.filter(t=>t.type==='in').reduce((a,t)=>a+Number(t.amount),0); }
+function getTotalOut(){ return data.transactions.filter(t=>t.type==='out').reduce((a,t)=>a+Number(t.amount),0); }
+function getUnpaidStudents(){ return data.students.filter(s=>{ const un=getUnpaidPeriods(s.id); return un.length>0; }); }
+function getPaidStudents(){ return data.students.filter(s=>{ const un=getUnpaidPeriods(s.id); const all=getStudentPeriods(s.id); return un.length===0 && all.length>0; }); }
+
+function renderDashboard(){
+  const bal=getTotalBalance();
+  const inAmt=getTotalIn();
+  const outAmt=getTotalOut();
+  document.getElementById('heroNominal').textContent=fmtRp(bal);
+  document.getElementById('heroIn').textContent=fmtRpShort(inAmt);
+  document.getElementById('heroOut').textContent=fmtRpShort(outAmt);
+  document.getElementById('heroStudents').textContent=data.students.length;
+
+  const paid=getPaidStudents().length;
+  const total=data.students.length;
+  const unpaid=total-paid;
+  const pct=total?Math.round((paid/total)*100):0;
+
+  document.getElementById('statPaid').textContent=paid;
+  document.getElementById('statPaidSub').textContent='dari '+total+' siswa';
+  document.getElementById('statPaidBar').style.width=pct+'%';
+  document.getElementById('statUnpaid').textContent=unpaid;
+  document.getElementById('statUnpaidBar').style.width=(total?(unpaid/total*100):0)+'%';
+
+  const target=data.targets[0];
+  const targetBox=document.getElementById('dashTarget');
+  if(target){
+    const pctT=target.goal?Math.round((target.collected/target.goal)*100):0;
+    targetBox.innerHTML=`
+      <div class="target-card">
+        <div class="tc-head">
+          <div class="tc-icon"><i class="fas fa-bullseye"></i></div>
+          <div style="flex:1">
+            <div class="tc-name">${esc(target.name)}</div>
+            <div class="tc-amount"><strong>${fmtRp(target.collected)}</strong> dari ${fmtRp(target.goal)}</div>
+          </div>
+        </div>
+        <div class="tc-prog"><i style="width:${Math.min(pctT,100)}%"></i></div>
+        <div class="tc-foot"><span>${pctT}% tercapai</span><span class="tc-pct">${fmtRp(target.goal-target.collected)} lagi</span></div>
+      </div>
+    `;
+  } else {
+    targetBox.innerHTML=`<div class="target-card"><div class="center text-muted" style="padding:16px;font-size:.82rem">Belum ada target. <span style="color:var(--primary);cursor:pointer;font-weight:700" onclick="navigateTo('targets')">Buat target →</span></div></div>`;
+  }
+
+  const actBox=document.getElementById('dashActivity');
+  const recent=[...data.transactions].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
+  if(recent.length===0){
+    actBox.innerHTML=`<div class="empty" style="padding:32px 16px"><div class="emp-ic" style="width:64px;height:64px;font-size:1.5rem"><i class="fas fa-receipt"></i></div><h3>Belum ada aktivitas</h3><p>Yuk catat transaksi pertama</p></div>`;
+  } else {
+    actBox.innerHTML=recent.map(t=>{
+      const isIn=t.type==='in';
+      let title, sub;
+      if(isIn){
+        const s=data.students.find(x=>x.id===t.studentId);
+        title=s?s.name:'Pemasukan';
+        sub=(t.covers?.length||0)+' periode';
+      } else {
+        title=t.purpose||t.category||'Pengeluaran';
+        sub=t.recipient||'';
+      }
+      return `<div class="act-item" onclick="navigateTo('transactions')">
+        <div class="act-av ${isIn?'in':'out'}"><i class="fas fa-arrow-${isIn?'down':'up'}"></i></div>
+        <div class="act-body">
+          <div class="act-title">${esc(title)}</div>
+          <div class="act-meta">${fmtTime(t.date)} · ${esc(sub)}</div>
+        </div>
+        <div class="act-amt ${isIn?'in':'out'}">${isIn?'+':'-'}${fmtRpShort(t.amount)}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+let payFilter='all';
+let paySearch='';
+
+document.querySelectorAll('#payChips .chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#payChips .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    payFilter=c.dataset.filter;
+    renderPayments();
+  });
+});
+
+document.getElementById('searchPayment').addEventListener('input',e=>{
+  paySearch=e.target.value.toLowerCase();
+  renderPayments();
+});
+
+function renderPayments(){
+  const listBox=document.getElementById('paymentList');
+  let list=data.students.filter(s=>s.isActive!==false);
+  if(paySearch) list=list.filter(s=>s.name.toLowerCase().includes(paySearch));
+  if(userMode==='student') list=list.filter(s=>s.id===currentStudentId);
+
+  const withStatus=list.map(s=>{ const st=getStudentStatus(s.id); return {...s, ...st}; });
+
+  let filtered=withStatus;
+  if(payFilter==='lunas') filtered=withStatus.filter(s=>s.status==='lunas');
+  else if(payFilter==='nyicil') filtered=withStatus.filter(s=>s.status==='nyicil');
+  else if(payFilter==='belum') filtered=withStatus.filter(s=>s.status==='belum');
+
+  if(filtered.length===0){
+    listBox.innerHTML=`<div class="empty"><div class="emp-ic"><i class="fas fa-users"></i></div><h3>Tidak ada data</h3><p>Belum ada siswa atau filter kosong.</p></div>`;
+    return;
+  }
+
+  listBox.innerHTML=filtered.map(s=>{
+    const badgeClass=s.status;
+    const badgeText=s.status==='lunas'?'LUNAS':s.status==='nyicil'?'NYICIL':'BELUM';
+    const pct=s.all.length?Math.round((s.paidCount/s.all.length)*100):0;
+    const actions=userMode==='student'
+      ? `<button class="btn ghost xs" onclick="showNota('${s.id}')"><i class="fas fa-receipt"></i> Nota</button>`
+      : `<button class="btn ghost xs" onclick="showNota('${s.id}')"><i class="fas fa-receipt"></i></button>
+         <button class="btn primary xs" onclick="bayarUntuk('${s.id}')"><i class="fas fa-plus"></i> Bayar</button>`;
+    return `
+      <div class="student-card">
+        <div class="sc-head">
+          <div class="sc-av" style="background:${avatarColor(s.name)}">${initials(s.name)}</div>
+          <div class="sc-info">
+            <div class="sc-name">${esc(s.name)}</div>
+            <div class="sc-meta">${s.paidCount} / ${s.all.length} periode · ${fmtRp(s.totalPaid)}</div>
+          </div>
+          <div class="sc-status ${badgeClass}">${badgeText}</div>
+        </div>
+        <div class="sc-prog-wrap">
+          <div class="sc-prog-info"><span>Progress</span><strong>${pct}%</strong></div>
+          <div class="sc-prog"><i class="${badgeClass}" style="width:${pct}%"></i></div>
+        </div>
+        <div class="sc-actions">${actions}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function bayarUntuk(studentId){
+  openTransaction('in');
+  setTimeout(()=>{
+    txState.type='in';
+    txState.category='kas';
+    txState.studentId=studentId;
+    txState.step=4;
+    renderTxStep();
+  },50);
+}
+window.bayarUntuk=bayarUntuk;
+
+function showNota(studentId){
+  const s=data.students.find(x=>x.id===studentId);
+  if(!s) return;
+  const st=getStudentStatus(studentId);
+  const nota=`
+🧾 *NOTA KAS — ${data.className}*
+━━━━━━━━━━━━━━━
+Nama: *${s.name}*
+Tanggal: ${fmtDateFull(new Date())}
+━━━━━━━━━━━━━━━
+Total Setor: *${fmtRp(st.totalPaid)}*
+Lunas: ${st.paidCount} periode
+Belum: ${st.unpaidCount} periode
+Status: ${st.status==='lunas'?'✅ LUNAS':st.status==='nyicil'?'🟡 NYICIL':'🔴 BELUM'}
+━━━━━━━━━━━━━━━
+${st.unpaidCount>0?`Sisa tunggakan: *${fmtRp(st.all.filter((_,i)=>i>=st.paidCount).reduce((a,p)=>a+p.amount,0))}*`:'Terima kasih sudah lunas! 🙏'}
+  `.trim();
+
+  openModal(`
+    <h3>🧾 Nota ${esc(s.name)}</h3>
+    <p class="modal-desc">Bagikan bukti bayar ke siswa.</p>
+    <div style="background:var(--input);border-radius:14px;padding:16px;font-family:monospace;font-size:.78rem;white-space:pre-wrap;line-height:1.6;max-height:280px;overflow-y:auto">${esc(nota)}</div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Tutup</button>
+      <button class="btn primary" onclick="copyText(\`${nota.replace(/`/g,'\\`').replace(/\$/g,'\\$')}\`)">📋 Copy</button>
+    </div>
+  `);
+}
+window.showNota=showNota;
+
+let txFilter='all';
+
+document.querySelectorAll('#txChips .chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#txChips .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    txFilter=c.dataset.filter;
+    renderTransactions();
+  });
+});
+
+function renderTransactions(){
+  const box=document.getElementById('txList');
+  let list=[...data.transactions];
+  if(userMode==='student') list=list.filter(t=>t.type==='out'||t.studentId===currentStudentId);
+  if(txFilter==='in') list=list.filter(t=>t.type==='in');
+  else if(txFilter==='out') list=list.filter(t=>t.type==='out');
+  else if(txFilter==='kas') list=list.filter(t=>t.type==='in'&&(t.category==='kas'||t.category==='tunggakan'));
+
+  list.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  if(list.length===0){
+    box.innerHTML=`<div class="empty"><div class="emp-ic"><i class="fas fa-receipt"></i></div><h3>Belum ada transaksi</h3><p>Yuk catat transaksi pertama</p></div>`;
+    return;
+  }
+
+  const {today,yesterday}=todayLabel();
+  const groups={};
+  list.forEach(t=>{ const k=dateKey(t.date); if(!groups[k]) groups[k]=[]; groups[k].push(t); });
+  const sortedKeys=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
+
+  box.innerHTML=sortedKeys.map(k=>{
+    let label;
+    if(k===today) label='Hari Ini · '+fmtDateFull(k);
+    else if(k===yesterday) label='Kemarin · '+fmtDateFull(k);
+    else label=fmtDateFull(k);
+    const items=groups[k];
+    return `<div class="date-group">
+      <div class="date-label">${label}</div>
+      <div class="tx-list">
+        ${items.map(t=>{
+          const isIn=t.type==='in';
+          let desc;
+          if(isIn){
+            const s=data.students.find(x=>x.id===t.studentId);
+            desc=(s?s.name:'-')+' — '+(t.category==='kas'?'Iuran':t.category==='tunggakan'?'Tunggakan':t.category||'Masuk');
+          } else {
+            desc=t.purpose||t.category||'Pengeluaran';
+          }
+          return `<div class="tx-item" onclick="showTxDetail('${t.id}')">
+            <div class="tx-ic ${isIn?'in':'out'}"><i class="fas fa-arrow-${isIn?'down':'up'}"></i></div>
+            <div class="tx-body">
+              <div class="tx-desc">${esc(desc)}</div>
+              <div class="tx-meta">${fmtTime(t.date)}${t.recipient?' · '+esc(t.recipient):''}</div>
+            </div>
+            <div class="tx-amt ${isIn?'in':'out'}">${isIn?'+':'-'}${fmtRp(t.amount)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showTxDetail(id){
+  const t=data.transactions.find(x=>x.id===id);
+  if(!t) return;
+  const s=data.students.find(x=>x.id===t.studentId);
+  const isIn=t.type==='in';
+  openModal(`
+    <h3>${isIn?'💳 Pembayaran':'💸 Pengeluaran'}</h3>
+    <p class="modal-desc">${fmtDateTimeFull(t.date)}</p>
+    <div class="confirm-card">
+      ${isIn?`<div class="confirm-row"><span class="cr-label">Siswa</span><span class="cr-value">${esc(s?.name||'-')}</span></div>`:''}
+      ${!isIn&&t.recipient?`<div class="confirm-row"><span class="cr-label">Penerima</span><span class="cr-value">${esc(t.recipient)}</span></div>`:''}
+      ${!isIn&&t.purpose?`<div class="confirm-row"><span class="cr-label">Keperluan</span><span class="cr-value">${esc(t.purpose)}</span></div>`:''}
+      <div class="confirm-row"><span class="cr-label">Kategori</span><span class="cr-value">${esc(t.category||'-')}</span></div>
+      ${isIn?`<div class="confirm-row"><span class="cr-label">Cakupan</span><span class="cr-value">${t.covers?.length||0} periode</span></div>`:''}
+      <div class="confirm-row big"><span class="cr-label">Jumlah</span><span class="cr-value" style="color:${isIn?'var(--success)':'var(--danger)'}">${isIn?'+':'-'}${fmtRp(t.amount)}</span></div>
+      <div class="confirm-row"><span class="cr-label">Metode</span><span class="cr-value">${esc(t.method||'-')}</span></div>
+      ${t.note?`<div class="confirm-row"><span class="cr-label">Catatan</span><span class="cr-value">${esc(t.note)}</span></div>`:''}
+      <div class="confirm-row"><span class="cr-label">Dicatat oleh</span><span class="cr-value">${esc(t.recordedBy||'-')}</span></div>
+    </div>
+    <div class="modal-actions">
+      ${userMode==='treasurer'?`<button class="btn danger" onclick="deleteTx('${t.id}')"><i class="fas fa-trash"></i> Hapus</button>`:''}
+      <button class="btn ghost" onclick="closeModal()">Tutup</button>
+    </div>
+  `);
+}
+window.showTxDetail=showTxDetail;
+
+function deleteTx(id){
+  if(!confirm('Hapus transaksi ini?')) return;
+  data.transactions=data.transactions.filter(t=>t.id!==id);
+  saveData(); closeModal(); renderAll();
+}
+window.deleteTx=deleteTx;
+
+document.getElementById('btnAddStudent').addEventListener('click',()=>{
+  openModal(`
+    <h3>Tambah Siswa</h3>
+    <p class="modal-desc">Nama siswa baru.</p>
+    <div class="f-group"><label>Nama</label><input type="text" id="newStudentName" placeholder="Nama lengkap"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Batal</button>
+      <button class="btn primary" onclick="doAddStudent()">Tambah</button>
+    </div>
+  `);
+  setTimeout(()=>document.getElementById('newStudentName')?.focus(),100);
+});
+
+function doAddStudent(){
+  const name=document.getElementById('newStudentName').value.trim();
+  if(!name){ alert('Nama wajib diisi.'); return; }
+  data.students.push({
+    id:genId(),
+    name,
+    joinDate:data.academicStart||new Date().toISOString(),
+    isActive:true,
+    accessCode:makeAccessCode()
+  });
+  saveData(); closeModal(); renderAll();
+}
+window.doAddStudent=doAddStudent;
+
+document.getElementById('searchStudent').addEventListener('input',e=>{
+  renderStudentsPage(e.target.value.toLowerCase());
+});
+
+function renderStudentsPage(search){
+  const q=search!==undefined?search:(document.getElementById('searchStudent').value||'').toLowerCase();
+  const box=document.getElementById('studentList');
+  let list=data.students.filter(s=>s.isActive!==false);
+  if(q) list=list.filter(s=>s.name.toLowerCase().includes(q));
+
+  if(list.length===0){
+    box.innerHTML=`<div class="empty"><div class="emp-ic"><i class="fas fa-users"></i></div><h3>Belum ada siswa</h3><p>Tambahkan siswa kelas kamu.</p></div>`;
+    return;
+  }
+  box.innerHTML=list.map(s=>{
+    const st=getStudentStatus(s.id);
+    return `
+      <div class="student-card">
+        <div class="sc-head">
+          <div class="sc-av" style="background:${avatarColor(s.name)}">${initials(s.name)}</div>
+          <div class="sc-info">
+            <div class="sc-name">${esc(s.name)}</div>
+            <div class="sc-meta">Kode: <span style="font-family:monospace;letter-spacing:1.5px;font-weight:800;color:var(--primary)">${esc(s.accessCode||'-')}</span></div>
+          </div>
+        </div>
+        <div class="sc-actions">
+          <button class="btn ghost xs" onclick="editStudent('${s.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn danger xs" onclick="deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function editStudent(id){
+  const s=data.students.find(x=>x.id===id);
+  if(!s) return;
+  openModal(`
+    <h3>Edit Siswa</h3>
+    <div class="f-group"><label>Nama</label><input type="text" id="editStudentName" value="${esc(s.name)}"></div>
+    <div class="f-group"><label>Kode Akses</label><input type="text" id="editStudentCode" value="${esc(s.accessCode||'')}" style="font-family:monospace;letter-spacing:2px;text-transform:uppercase"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Batal</button>
+      <button class="btn primary" onclick="doEditStudent('${id}')">Simpan</button>
+    </div>
+  `);
+}
+window.editStudent=editStudent;
+
+function doEditStudent(id){
+  const s=data.students.find(x=>x.id===id);
+  if(!s) return;
+  const name=document.getElementById('editStudentName').value.trim();
+  const code=document.getElementById('editStudentCode').value.trim().toUpperCase();
+  if(name) s.name=name;
+  if(code) s.accessCode=code;
+  saveData(); closeModal(); renderAll();
+}
+window.doEditStudent=doEditStudent;
+
+function deleteStudent(id){
+  if(!confirm('Hapus siswa ini? Semua transaksi terkait juga akan dihapus.')) return;
+  data.students=data.students.filter(s=>s.id!==id);
+  data.transactions=data.transactions.filter(t=>t.studentId!==id);
+  saveData(); renderAll();
+}
+window.deleteStudent=deleteStudent;
+
+document.getElementById('btnAddTarget').addEventListener('click',()=>{
+  openModal(`
+    <h3>Tambah Target</h3>
+    <div class="f-group"><label>Nama Target</label><input type="text" id="tName" placeholder="Contoh: Kipas kelas"></div>
+    <div class="f-group"><label>Target Dana</label><input type="number" id="tGoal" placeholder="1200000"></div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn primary" onclick="doAddTarget()">Simpan</button></div>
+  `);
+  setTimeout(()=>document.getElementById('tName')?.focus(),100);
+});
+function doAddTarget(){
+  const name=document.getElementById('tName').value.trim();
+  const goal=Number(document.getElementById('tGoal').value);
+  if(!name||!goal){ alert('Isi nama dan target.'); return; }
+  data.targets.push({id:genId(),name,goal,collected:0});
+  saveData(); closeModal(); renderAll();
+}
+window.doAddTarget=doAddTarget;
+
+function renderTargets(){
+  const box=document.getElementById('targetList');
+  if(data.targets.length===0){
+    box.innerHTML=`<div class="empty"><div class="emp-ic"><i class="fas fa-bullseye"></i></div><h3>Belum ada target</h3><p>Buat target buat kelas.</p></div>`;
+    return;
+  }
+  box.innerHTML=data.targets.map(t=>{
+    const pct=t.goal?Math.round((t.collected/t.goal)*100):0;
+    return `
+      <div class="target-card">
+        <div class="tc-head">
+          <div class="tc-icon"><i class="fas fa-bullseye"></i></div>
+          <div style="flex:1">
+            <div class="tc-name">${esc(t.name)}</div>
+            <div class="tc-amount"><strong>${fmtRp(t.collected)}</strong> dari ${fmtRp(t.goal)}</div>
+          </div>
+        </div>
+        <div class="tc-prog"><i style="width:${Math.min(pct,100)}%"></i></div>
+        <div class="tc-foot"><span>${pct}% tercapai</span><span class="tc-pct">${fmtRp(t.goal-t.collected)} lagi</span></div>
+        <div class="sc-actions" style="margin-top:12px">
+          <button class="btn primary xs" onclick="addTargetFunds('${t.id}')"><i class="fas fa-plus"></i> Tambah Dana</button>
+          <button class="btn danger xs" onclick="deleteTarget('${t.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function addTargetFunds(id){
+  const t=data.targets.find(x=>x.id===id);
+  if(!t) return;
+  openModal(`
+    <h3>Tambah Dana</h3>
+    <p class="modal-desc">${esc(t.name)}</p>
+    <div class="f-group"><label>Jumlah</label><div class="amount-input"><span class="ai-prefix">Rp</span><input type="tel" inputmode="numeric" id="tfAmount" placeholder="0"></div></div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn primary" onclick="doAddFunds('${id}')">Simpan</button></div>
+  `);
+}
+window.addTargetFunds=addTargetFunds;
+
+function doAddFunds(id){
+  const t=data.targets.find(x=>x.id===id);
+  const amt=Number(document.getElementById('tfAmount').value);
+  if(!amt){ alert('Masukkan jumlah.'); return; }
+  t.collected+=amt;
+  data.transactions.push({
+    id:genId(), type:'in', category:'target', studentId:null,
+    amount:amt, expected:amt, covers:[], method:'tunai',
+    date:new Date().toISOString(), note:'Dana target: '+t.name,
+    recordedBy:data.treasurerName||'Bendahara'
+  });
+  saveData(); closeModal(); renderAll();
+}
+window.doAddFunds=doAddFunds;
+
+function deleteTarget(id){
+  if(!confirm('Hapus target ini?')) return;
+  data.targets=data.targets.filter(t=>t.id!==id);
+  saveData(); renderAll();
+}
+window.deleteTarget=deleteTarget;
+
+document.getElementById('btnAddInventory').addEventListener('click',()=>{
+  openModal(`
+    <h3>Tambah Barang</h3>
+    <div class="f-group"><label>Nama Barang</label><input type="text" id="iName" placeholder="Contoh: Spidol"></div>
+    <div class="f-group"><label>Jumlah</label><input type="number" id="iQty" placeholder="4"></div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn primary" onclick="doAddInventory()">Simpan</button></div>
+  `);
+});
+function doAddInventory(){
+  const name=document.getElementById('iName').value.trim();
+  const qty=Number(document.getElementById('iQty').value)||0;
+  if(!name){ alert('Nama wajib.'); return; }
+  data.inventory.push({id:genId(),name,quantity:qty});
+  saveData(); closeModal(); renderAll();
+}
+window.doAddInventory=doAddInventory;
+
+function renderInventory(){
+  const box=document.getElementById('inventoryList');
+  if(data.inventory.length===0){
+    box.innerHTML=`<div class="empty"><div class="emp-ic"><i class="fas fa-boxes"></i></div><h3>Belum ada barang</h3><p>Catat barang inventaris kelas.</p></div>`;
+    return;
+  }
+  box.innerHTML=data.inventory.map(i=>`
+    <div class="student-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:var(--grad-tosca)"><i class="fas fa-box"></i></div>
+        <div class="sc-info"><div class="sc-name">${esc(i.name)}</div><div class="sc-meta">Jumlah: ${i.quantity}</div></div>
+        <button class="btn danger xs" onclick="deleteInventory('${i.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+function deleteInventory(id){
+  if(!confirm('Hapus?')) return;
+  data.inventory=data.inventory.filter(x=>x.id!==id);
+  saveData(); renderAll();
+}
+window.deleteInventory=deleteInventory;
+
+document.getElementById('btnAddQRIS').addEventListener('click',()=>{
+  openModal(`
+    <h3>Tambah QRIS</h3>
+    <div class="f-group"><label>Nama QRIS</label><input type="text" id="qName" placeholder="Contoh: BCA"></div>
+    <div class="f-group"><label>Gambar</label><input type="file" id="qFile" accept="image/*"></div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn primary" onclick="doAddQris()">Simpan</button></div>
+  `);
+});
+function doAddQris(){
+  const name=document.getElementById('qName').value.trim();
+  const file=document.getElementById('qFile').files[0];
+  if(!name||!file){ alert('Lengkapi data.'); return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    data.qrisList.push({id:genId(),name,dataUrl:e.target.result});
+    saveData(); closeModal(); renderAll();
+  };
+  reader.readAsDataURL(file);
+}
+window.doAddQris=doAddQris;
+
+function renderQris(){
+  const box=document.getElementById('qrisList');
+  if(data.qrisList.length===0){
+    box.innerHTML=`<div class="empty"><div class="emp-ic"><i class="fas fa-qrcode"></i></div><h3>Belum ada QRIS</h3></div>`;
+    return;
+  }
+  box.innerHTML=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">${data.qrisList.map(q=>`
+    <div class="student-card" style="text-align:center">
+      <img src="${q.dataUrl}" style="max-width:100%;border-radius:12px;background:#fff;padding:8px;max-height:150px">
+      <div style="margin-top:10px;font-weight:800;font-size:.85rem">${esc(q.name)}</div>
+      <div class="sc-actions" style="justify-content:center;margin-top:10px"><button class="btn danger xs" onclick="deleteQris('${q.id}')"><i class="fas fa-trash"></i></button></div>
+    </div>
+  `).join('')}</div>`;
+}
+function deleteQris(id){
+  if(!confirm('Hapus?')) return;
+  data.qrisList=data.qrisList.filter(x=>x.id!==id);
+  saveData(); renderAll();
+}
+window.deleteQris=deleteQris;
+
+function renderSettings(){
+  document.getElementById('setClass').value=data.className||'';
+  document.getElementById('setTreasurer').value=data.treasurerName||'';
+  const rule=getActiveRule();
+  document.getElementById('setIuranNominal').textContent=fmtRp(rule.nominal);
+  document.getElementById('setIuranPeriode').textContent=rule.periode==='mingguan'?'Mingguan':'Bulanan';
+  document.getElementById('setIuranStart').textContent=data.academicStart?fmtDate(data.academicStart):'-';
+  document.querySelectorAll('.theme-dot').forEach(d=>{
+    d.classList.toggle('active',d.dataset.theme===(data.settings?.theme||'biru'));
+  });
+}
+
+document.getElementById('btnSaveSettings').addEventListener('click',()=>{
+  const cls=document.getElementById('setClass').value.trim();
+  const treasurer=document.getElementById('setTreasurer').value.trim();
+  const pin=document.getElementById('setPin').value.trim();
+  if(cls) data.className=cls;
+  if(treasurer) data.treasurerName=treasurer;
+  if(pin){
+    if(pin.length<4||pin.length>6){ alert('PIN harus 4-6 digit.'); return; }
+    data.treasurerPin=pin;
+  }
+  saveData(); renderAll();
+  alert('✅ Pengaturan disimpan.');
+});
+
+document.getElementById('btnEditIuran').addEventListener('click',()=>{
+  const rule=getActiveRule();
+  openModal(`
+    <h3>Ubah Iuran</h3>
+    <p class="modal-desc">Perubahan berlaku mulai tanggal yang ditentukan.</p>
+    <div class="f-group"><label>Nominal Baru</label><input type="number" id="newNominal" value="${rule.nominal}"></div>
+    <div class="f-group"><label>Periode</label><select id="newPeriode">
+      <option value="mingguan" ${rule.periode==='mingguan'?'selected':''}>Mingguan</option>
+      <option value="bulanan" ${rule.periode==='bulanan'?'selected':''}>Bulanan</option>
+    </select></div>
+    <div class="f-group"><label>Berlaku Mulai</label><input type="date" id="newStart" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn primary" onclick="doUpdateIuran()">Simpan</button></div>
+  `);
+});
+function doUpdateIuran(){
+  const nominal=Number(document.getElementById('newNominal').value);
+  const periode=document.getElementById('newPeriode').value;
+  const start=document.getElementById('newStart').value;
+  if(!nominal||!start){ alert('Lengkapi data.'); return; }
+  data.iuranRules.push({id:genId(),nominal,periode,berlakuMulai:start});
+  saveData(); closeModal(); renderAll();
+  alert('✅ Iuran diperbarui.');
+}
+window.doUpdateIuran=doUpdateIuran;
+
+document.getElementById('themeDots').addEventListener('click',e=>{
+  const dot=e.target.closest('.theme-dot');
+  if(!dot) return;
+  data.settings=data.settings||{};
+  data.settings.theme=dot.dataset.theme;
+  saveData();
+  applyTheme();
+  renderSettings();
+});
+
+function applyTheme(){
+  const theme=data.settings?.theme||'biru';
+  const grads={
+    biru:'linear-gradient(135deg,#1E40AF 0%,#2563EB 100%)',
+    tosca:'linear-gradient(135deg,#0E7490 0%,#06B6D4 100%)',
+    ungu:'linear-gradient(135deg,#4338CA 0%,#6366F1 100%)'
+  };
+  const g=grads[theme]||grads.biru;
+  document.querySelector('.hero-card').style.background=g;
+  document.querySelector('.lh-logo').style.background=g;
+}
+
+document.getElementById('btnResetAll').addEventListener('click',()=>{
+  if(!confirm('⚠️ Hapus SEMUA data? Tidak bisa dibatalkan!')) return;
+  if(!confirm('Yakin? Data akan hilang permanen.')) return;
+  localStorage.removeItem(DB_KEY);
+  location.reload();
+});
+
+function showAllCodes(){
+  const list=data.students.map(s=>`${s.name}: ${s.accessCode||'-'}`).join('\n');
+  openModal(`
+    <h3>Kode Akses Siswa</h3>
+    <p class="modal-desc">Bagikan kode ini ke masing-masing siswa.</p>
+    <div style="background:var(--input);border-radius:14px;padding:16px;font-family:monospace;font-size:.8rem;white-space:pre-wrap;line-height:1.7;max-height:320px;overflow-y:auto">${esc(list||'Belum ada siswa')}</div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Tutup</button>
+      <button class="btn primary" onclick="copyText(\`${list.replace(/`/g,'\\`').replace(/\$/g,'\\$')}\`)">📋 Copy</button>
+    </div>
+  `);
+}
+window.showAllCodes=showAllCodes;
+
+/* ============ TUTORIAL ============ */
+const tutorialSteps=[
+  {icon:'fa-graduation-cap',color:'blue',title:'Selamat Datang di <span>UangKasPlus</span>!',text:`
+    Aplikasi ini adalah asisten digital bendahara kelas.<br><br>
+    <strong>Yang bisa kamu lakukan:</strong>
+    <ul>
+      <li><strong>Catat pembayaran kas</strong> siswa otomatis</li>
+      <li><strong>Lacak tunggakan</strong> tiap siswa</li>
+      <li><strong>Kelola target dana</strong> kelas</li>
+      <li><strong>Share laporan</strong> ke grup WhatsApp</li>
+    </ul>`,
+    feats:[{i:'fa-piggy-bank',l:'Kas'},{i:'fa-users',l:'Siswa'},{i:'fa-chart-bar',l:'Laporan'},{i:'fa-bullseye',l:'Target'}]},
+  {icon:'fa-plus-circle',color:'green',title:'Cara Catat Pembayaran',text:`
+    <strong>Klik tombol "Kas"</strong> di Beranda, lalu ikuti langkahnya:
+    <ul>
+      <li>Pilih <strong>Uang Masuk</strong></li>
+      <li>Pilih <strong>Pembayaran Kas</strong></li>
+      <li>Pilih <strong>siswa</strong> yang bayar</li>
+      <li>Pilih <strong>cakupan</strong> (tunggakan/minggu tertentu/sampai lulus)</li>
+      <li>Masukkan <strong>nominal</strong> — sistem otomatis hitung</li>
+      <li>Konfirmasi & simpan</li>
+    </ul>
+    <span style="color:var(--primary);font-weight:800">💡 Tips:</span> Sistem otomatis alokasikan bayaran ke periode paling awal.`,
+    feats:[{i:'fa-clock',l:'Tunggakan'},{i:'fa-calendar',l:'Periode'},{i:'fa-check',l:'Cicilan'},{i:'fa-calculator',l:'Auto Hitung'}]},
+  {icon:'fa-chart-line',color:'gold',title:'Lihat Status & Laporan',text:`
+    <strong>Status siswa</strong> ada 3 level:
+    <ul>
+      <li><strong style="color:#10B981">Lunas</strong> — semua periode sudah dibayar</li>
+      <li><strong style="color:#F59E0B">Nyicil</strong> — bayar sebagian</li>
+      <li><strong style="color:#EF4444">Belum</strong> — belum bayar sama sekali</li>
+    </ul>
+    Buka <strong>Laporan</strong> untuk lihat grafik & share ke WA kelas.`,
+    feats:[{i:'fa-copy',l:'Copy WA'},{i:'fa-receipt',l:'Nota'},{i:'fa-chart-pie',l:'Grafik'},{i:'fa-download',l:'Export'}]},
+  {icon:'fa-user-graduate',color:'purple',title:'Mode Siswa (Read-Only)',text:`
+    Siswa bisa cek status kas mereka sendiri!<br><br>
+    <strong>Caranya:</strong>
+    <ul>
+      <li>Bendahara buka <strong>Pengaturan → Kode Akses Siswa</strong></li>
+      <li>Bagikan kode ke masing-masing siswa</li>
+      <li>Siswa buka website → tab <strong>Siswa</strong> → masukkan kode</li>
+      <li>Siswa hanya bisa lihat, tidak bisa edit</li>
+    </ul>`,
+    feats:[{i:'fa-key',l:'Kode Akses'},{i:'fa-eye',l:'Read Only'},{i:'fa-shield',l:'Aman'},{i:'fa-mobile',l:'Mobile'}]},
+];
+
+let tutIdx=0;
+
+function renderTutorialTabs(){
+  const tabs=document.getElementById('tutTabs');
+  if(tabs.children.length===0){
+    tutorialSteps.forEach((s,i)=>{
+      const btn=document.createElement('button');
+      btn.className='tut-tab'+(i===0?' active':'');
+      btn.textContent='Step '+(i+1);
+      btn.addEventListener('click',()=>{ tutIdx=i; renderTutorialTabs(); });
+      tabs.appendChild(btn);
+    });
+  }
+  const c=document.getElementById('tutContent');
+  const s=tutorialSteps[tutIdx];
+  const prevDisabled=tutIdx===0;
+  const nextDisabled=tutIdx===tutorialSteps.length-1;
+  c.innerHTML=`
+    <div class="tut-card">
+      <div class="tut-ic ${s.color}"><i class="fas ${s.icon}"></i></div>
+      <div class="tut-title">${s.title}</div>
+      <div class="tut-text">${s.text}</div>
+      <div class="tut-feats">${s.feats.map(f=>`<div class="tut-feat"><i class="fas ${f.i}"></i><div class="lf">${f.l}</div></div>`).join('')}</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn ghost" style="flex:1;padding:14px" ${prevDisabled?'disabled':''} onclick="tutPrev()"><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+      <button class="btn primary" style="flex:1;padding:14px" ${nextDisabled?'disabled':''} onclick="tutNext()">Selanjutnya <i class="fas fa-arrow-right"></i></button>
+    </div>
+  `;
+  document.querySelectorAll('.tut-tab').forEach((t,i)=>t.classList.toggle('active',i===tutIdx));
+}
+function tutPrev(){ if(tutIdx>0){ tutIdx--; renderTutorialTabs(); } }
+function tutNext(){ if(tutIdx<tutorialSteps.length-1){ tutIdx++; renderTutorialTabs(); } }
+window.tutPrev=tutPrev; window.tutNext=tutNext;
+
+let chart1=null, chart2=null;
+
+document.querySelectorAll('.report-tabs button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.report-tabs button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.report-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('rtab-'+b.dataset.rtab).classList.add('active');
+    if(b.dataset.rtab==='ringkasan') setTimeout(renderCharts,80);
+  });
+});
+
+function renderCharts(){
+  const ctx1=document.getElementById('chartIncome');
+  const ctx2=document.getElementById('chartStatus');
+  if(!ctx1||!ctx2) return;
+
+  // Report hero
+  const elClass=document.getElementById('reportClassName');
+  const elDate=document.getElementById('reportDate');
+  const elBal=document.getElementById('reportBalance');
+  const elStu=document.getElementById('reportStudents');
+  if(elClass) elClass.textContent='Kelas '+(data.className||'-');
+  if(elDate) elDate.textContent=fmtDateFull(new Date());
+  if(elBal) elBal.textContent=fmtRp(getTotalBalance());
+  if(elStu) elStu.textContent=data.students.length;
+
+  const days=[]; const sums=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const k=d.toISOString().slice(0,10);
+    days.push(d.toLocaleDateString('id-ID',{day:'numeric',month:'short'}));
+    const total=data.transactions
+      .filter(t=>t.type==='in' && t.date.slice(0,10)===k)
+      .reduce((a,t)=>a+Number(t.amount),0);
+    sums.push(total);
+  }
+
+  if(chart1) chart1.destroy();
+  chart1=new Chart(ctx1,{
+    type:'line',
+    data:{
+      labels:days,
+      datasets:[{
+        label:'Pemasukan',
+        data:sums,
+        borderColor:'#1E40AF',
+        backgroundColor:'rgba(30,64,175,0.1)',
+        fill:true,
+        tension:0.4,
+        pointBackgroundColor:'#1E40AF',
+        pointBorderColor:'#fff',
+        pointBorderWidth:2,
+        pointRadius:4,
+        borderWidth:2.5
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtRpShort(v),font:{size:10}}},x:{ticks:{font:{size:10}},grid:{display:false}}}
+    }
+  });
+
+  const paidCount=getPaidStudents().length;
+  const total=data.students.length;
+  const nyicilCount=data.students.filter(s=>getStudentStatus(s.id).status==='nyicil').length;
+  const belumCount=total-paidCount-nyicilCount;
+
+  if(chart2) chart2.destroy();
+  chart2=new Chart(ctx2,{
+    type:'doughnut',
+    data:{
+      labels:['Lunas','Nyicil','Belum'],
+      datasets:[{
+        data:[paidCount,nyicilCount,belumCount],
+        backgroundColor:['#10B981','#F59E0B','#EF4444'],
+        borderWidth:0,
+        hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout:'65%',
+      plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:14,usePointStyle:true,pointStyle:'circle'}}}
+    }
+  });
+
+  document.getElementById('reportSummary').innerHTML=`
+    <div class="stat2">
+      <div class="stat-card"><div class="st-label">Total Saldo</div><div class="st-value tnum">${fmtRpShort(getTotalBalance())}</div></div>
+      <div class="stat-card"><div class="st-label">Total Siswa</div><div class="st-value tnum">${total}</div></div>
+    </div>
+  `;
+}
+
+function shareTemplate(type){
+  let text='';
+  const dateStr=fmtDateFull(new Date());
+  const bal=getTotalBalance();
+
+  if(type==='daily'){
+    const todayK=new Date().toISOString().slice(0,10);
+    const todayIn=data.transactions.filter(t=>t.type==='in'&&t.date.slice(0,10)===todayK);
+    const todayOut=data.transactions.filter(t=>t.type==='out'&&t.date.slice(0,10)===todayK);
+    const unpaid=getUnpaidStudents();
+    const totalIn=todayIn.reduce((a,t)=>a+Number(t.amount),0);
+    text=`📢 *KAS KELAS ${data.className}*\n📅 ${dateStr}\n\n💰 *Saldo:* ${fmtRp(bal)}\n✅ Masuk hari ini: ${fmtRp(totalIn)} (${todayIn.length} transaksi)\n❌ Belum bayar: ${unpaid.length} siswa\n\n${unpaid.length>0?'*Yang belum bayar:*\n'+unpaid.slice(0,15).map((s,i)=>`${i+1}. ${s.name}`).join('\n')+(unpaid.length>15?`\n+${unpaid.length-15} lainnya`:''):'✅ Semua sudah lunas! 🎉'}`;
+  } else if(type==='weekly'){
+    const d=new Date(); d.setDate(d.getDate()-7);
+    const lastWeek=data.transactions.filter(t=>new Date(t.date)>=d);
+    const inAmt=lastWeek.filter(t=>t.type==='in').reduce((a,t)=>a+Number(t.amount),0);
+    const outAmt=lastWeek.filter(t=>t.type==='out').reduce((a,t)=>a+Number(t.amount),0);
+    const total=data.students.length;
+    const paid=getPaidStudents().length;
+    text=`📊 *REKAP MINGGU INI — ${data.className}*\n📅 ${dateStr}\n\n💰 Saldo: *${fmtRp(bal)}*\n📥 Masuk: ${fmtRp(inAmt)}\n📤 Keluar: ${fmtRp(outAmt)}\n\n👥 Lunas: ${paid}/${total} siswa (${total?Math.round(paid/total*100):0}%)\n\nTetap semangat! 💪`;
+  } else if(type==='reminder'){
+    const unpaid=getUnpaidStudents();
+    if(unpaid.length===0){ text='✅ Semua siswa sudah lunas!'; }
+    else {
+      text=`⏰ *REMINDER KAS ${data.className}*\n📅 ${dateStr}\n\nHalo teman-teman, ini daftar yang belum bayar kas:\n\n${unpaid.map((s,i)=>{
+        const un=getUnpaidPeriods(s.id);
+        const total=un.reduce((a,p)=>a+p.amount,0);
+        return `${i+1}. ${s.name} — ${un.length} periode (${fmtRp(total)})`;
+      }).join('\n')}\n\nMohon segera diselesaikan ya 🙏\nBisa transfer atau bayar langsung ke bendahara.`;
+    }
+  }
+
+  openModal(`
+    <h3>Preview Laporan</h3>
+    <p class="modal-desc">Copy lalu paste ke grup WA kelas.</p>
+    <div style="background:var(--input);border-radius:14px;padding:16px;font-family:monospace;font-size:.75rem;white-space:pre-wrap;line-height:1.7;max-height:400px;overflow-y:auto">${esc(text)}</div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Tutup</button>
+      <button class="btn primary" onclick="copyText(\`${text.replace(/`/g,'\\`').replace(/\$/g,'\\$')}\`)">📋 Copy</button>
+    </div>
+  `);
+}
+window.shareTemplate=shareTemplate;
+
+function pickStudentForNota(){
+  const students=data.students.filter(s=>s.isActive!==false);
+  if(students.length===0){ alert('Belum ada siswa.'); return; }
+  openModal(`
+    <h3>Pilih Siswa</h3>
+    <p class="modal-desc">Untuk generate nota pembayaran.</p>
+    <div style="max-height:400px;overflow-y:auto">
+      ${students.map(s=>`
+        <button class="student-pick" onclick="closeModal();showNota('${s.id}')">
+          <div class="sp-av" style="background:${avatarColor(s.name)}">${initials(s.name)}</div>
+          <div class="sp-name">${esc(s.name)}</div>
+          <i class="fas fa-chevron-right" style="color:var(--text-3)"></i>
+        </button>
+      `).join('')}
+    </div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Tutup</button></div>
+  `);
+}
+window.pickStudentForNota=pickStudentForNota;
+
+function copyText(text){
+  const doFallback=()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.style.position='fixed'; ta.style.opacity=0;
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); alert('✅ Tersalin!'); }catch(e){ alert('Gagal copy. Copy manual ya.'); }
+    document.body.removeChild(ta);
+  };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(text).then(()=>alert('✅ Tersalin!')).catch(doFallback);
+  } else doFallback();
+}
+window.copyText=copyText;
+
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='UangKasPlus-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+function exportCSV(){
+  const rows=[['Tanggal Lengkap','Hari','Tanggal','Jam','Jenis','Kategori','Siswa/Penerima','Jumlah','Metode','Keterangan']];
+  data.transactions.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(t=>{
+    const d=new Date(t.date);
+    const s=data.students.find(x=>x.id===t.studentId);
+    rows.push([
+      fmtDateTimeFull(t.date),
+      d.toLocaleDateString('id-ID',{weekday:'long'}),
+      d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),
+      d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}).replace('.',':'),
+      t.type==='in'?'Masuk':'Keluar',
+      t.category||'-',
+      (s?s.name:(t.recipient||'-')).replace(/,/g,';'),
+      t.amount,
+      t.method||'-',
+      (t.note||t.purpose||'').replace(/,/g,';')
+    ]);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='UangKasPlus-LaporanLengkap-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function printReport(){
+  const bal=getTotalBalance();
+  const inAmt=getTotalIn();
+  const outAmt=getTotalOut();
+  const paid=getPaidStudents().length;
+  const total=data.students.length;
+
+  const rows=data.transactions
+    .sort((a,b)=>new Date(a.date)-new Date(b.date))
+    .map(t=>{
+      const s=data.students.find(x=>x.id===t.studentId);
+      const desc=t.type==='in'
+        ? ((s?s.name:'-')+' — '+(t.category||'Masuk'))
+        : (t.purpose||t.category||'Pengeluaran');
+      return `<tr>
+        <td>${fmtDateFull(t.date)}</td>
+        <td>${fmtTime(t.date)}</td>
+        <td>${esc(desc)}</td>
+        <td>${t.method||'-'}</td>
+        <td style="text-align:right;color:${t.type==='in'?'#047857':'#B91C1C'};font-weight:700">${t.type==='in'?'+':'-'}${fmtRp(t.amount)}</td>
+      </tr>`;
+    }).join('');
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Laporan Kas ${esc(data.className)}</title>
+  <style>
+    *{font-family:'Segoe UI',Arial,sans-serif;box-sizing:border-box}
+    body{padding:32px;color:#0F172A;max-width:900px;margin:0 auto}
+    h1{color:#1E40AF;margin-bottom:4px;font-size:22px}
+    .sub{color:#64748B;font-size:13px;margin-bottom:24px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+    .card{border:1px solid #E2E8F0;border-radius:12px;padding:14px}
+    .lbl{font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+    .val{font-size:18px;font-weight:800;margin-top:4px;color:#0F172A}
+    .val.blue{color:#1E40AF}
+    .val.green{color:#047857}
+    .val.red{color:#B91C1C}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
+    th{background:#EFF6FF;color:#1E40AF;text-align:left;padding:10px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #DBEAFE}
+    td{padding:10px;border-bottom:1px solid #F1F5F9}
+    tr:nth-child(even) td{background:#FAFBFC}
+    .header{border-bottom:3px solid #1E40AF;padding-bottom:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end}
+    .header .right{text-align:right;font-size:12px;color:#64748B}
+    .footer{margin-top:32px;text-align:center;font-size:11px;color:#94A3B8;border-top:1px solid #E2E8F0;padding-top:16px}
+    @media print{body{padding:16px}}
+  </style></head><body>
+    <div class="header">
+      <div>
+        <h1>Laporan Kas Kelas</h1>
+        <div class="sub">${esc(data.className)} — Bendahara: ${esc(data.treasurerName||'-')}</div>
+      </div>
+      <div class="right">Dicetak:<br><strong>${fmtDateFull(new Date())}</strong></div>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="lbl">Total Saldo</div><div class="val blue">${fmtRp(bal)}</div></div>
+      <div class="card"><div class="lbl">Total Siswa</div><div class="val">${total} siswa</div></div>
+      <div class="card"><div class="lbl">Total Pemasukan</div><div class="val green">${fmtRp(inAmt)}</div></div>
+      <div class="card"><div class="lbl">Total Pengeluaran</div><div class="val red">${fmtRp(outAmt)}</div></div>
+    </div>
+    <h3 style="margin:0 0 8px;font-size:14px;color:#1E40AF">Status Siswa</h3>
+    <p style="font-size:12px;color:#64748B;margin:0 0 4px">Lunas: <strong>${paid}</strong> siswa · Belum Lunas: <strong>${total-paid}</strong> siswa</p>
+    <h3 style="margin:24px 0 0;font-size:14px;color:#1E40AF">Riwayat Transaksi (${data.transactions.length})</h3>
+    <table>
+      <thead><tr><th>Tanggal</th><th>Jam</th><th>Keterangan</th><th>Metode</th><th style="text-align:right">Jumlah</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="5" style="text-align:center;color:#94A3B8;padding:24px">Belum ada transaksi</td></tr>'}</tbody>
+    </table>
+    <div class="footer">Dibuat dengan UangKasPlus · ${fmtDateFull(new Date())}</div>
+  </body></html>`;
+
+  const w=window.open('','_blank');
+  if(!w){ alert('Popup diblokir. Izinkan popup untuk cetak.'); return; }
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>{ w.focus(); w.print(); },400);
+}
+
+function showQRReport(){
+  const text=`Laporan Kas ${data.className}\nSaldo: ${fmtRp(getTotalBalance())}\nTotal siswa: ${data.students.length}\nUpdate: ${fmtDateFull(new Date())}`;
+  openModal(`
+    <h3>QR Code Laporan</h3>
+    <p class="modal-desc">Scan untuk lihat ringkasan.</p>
+    <div style="text-align:center;padding:22px;background:#fff;border-radius:16px;border:1px solid var(--border)"><div id="qrReportBox" style="display:flex;justify-content:center"></div></div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Tutup</button></div>
+  `);
+  setTimeout(()=>{
+    const el=document.getElementById('qrReportBox');
+    if(el) new QRCode(el,{text,width:180,height:180,colorDark:'#0F172A'});
+  },100);
+}
+window.exportJSON=exportJSON; window.exportCSV=exportCSV; window.printReport=printReport; window.showQRReport=showQRReport;
+
+document.getElementById('btnCopyReport').addEventListener('click',()=>shareTemplate('daily'));
+
+/* ============ INIT ============ */
+loadData();
+applyTheme();
+checkAuth();
+
+console.log('🚀 UangKasPlus v3.1 Dark Blue Edition loaded');
+</script>
+</body>
+</html>
